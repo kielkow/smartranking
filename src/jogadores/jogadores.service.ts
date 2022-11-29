@@ -30,4 +30,8 @@ export class JogadoresService {
 
     this.jogadores.push(jogador);
   }
+
+  async consultarJogadores(): Promise<Jogador[]> {
+    return this.jogadores;
+  }
 }
