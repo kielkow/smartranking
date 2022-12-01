@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CriarJogadorDTO } from './dtos/criar-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 import { JogadoresService } from './jogadores.service';
@@ -13,7 +20,13 @@ export class JogadoresController {
   }
 
   @Get()
-  async consultarJogadores(): Promise<Jogador[]> {
+  async consultarJogadores(
+    @Query('email') email: string,
+  ): Promise<Jogador | Jogador[] | NotFoundException> {
+    if (email) {
+      return this.jogadoresService.consultarJogadorPorEmail(email);
+    }
+
     return this.jogadoresService.consultarJogadores();
   }
 }
