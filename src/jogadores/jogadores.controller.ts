@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Post,
@@ -28,5 +29,12 @@ export class JogadoresController {
     }
 
     return this.jogadoresService.consultarJogadores();
+  }
+
+  @Delete()
+  async deletarJogador(
+    @Query('email') email: string,
+  ): Promise<void | NotFoundException> {
+    await this.jogadoresService.deletarJogador(email);
   }
 }

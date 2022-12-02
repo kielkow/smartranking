@@ -60,4 +60,14 @@ export class JogadoresService {
 
     return jogador;
   }
+
+  async deletarJogador(email: string): Promise<void | NotFoundException> {
+    const jogador = this.jogadores.find((jogador) => jogador.email === email);
+
+    if (!jogador) throw new NotFoundException('Jogador não encontrado');
+
+    this.jogadores = this.jogadores.filter(
+      (jogador) => jogador.email !== email,
+    );
+  }
 }
