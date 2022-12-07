@@ -25,16 +25,14 @@ export class JogadoresController {
     @Query('email') email: string,
   ): Promise<Jogador | Jogador[] | NotFoundException> {
     if (email) {
-      return this.jogadoresService.consultarJogadorPorEmail(email);
+      return await this.jogadoresService.consultarJogadorPorEmail(email);
     }
 
-    return this.jogadoresService.consultarJogadores();
+    return await this.jogadoresService.consultarJogadores();
   }
 
   @Delete()
-  async deletarJogador(
-    @Query('email') email: string,
-  ): Promise<void | NotFoundException> {
+  async deletarJogador(@Query('email') email: string): Promise<void> {
     await this.jogadoresService.deletarJogador(email);
   }
 }
