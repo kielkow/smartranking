@@ -6,6 +6,8 @@ import {
   NotFoundException,
   Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CriarJogadorDTO } from './dtos/criar-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
@@ -16,6 +18,7 @@ export class JogadoresController {
   constructor(private readonly jogadoresService: JogadoresService) {}
 
   @Post()
+  @UsePipes(ValidationPipe)
   async criarAtualizarJogador(@Body() criarJogadorDTO: CriarJogadorDTO) {
     await this.jogadoresService.criarAtualizarJogador(criarJogadorDTO);
   }
