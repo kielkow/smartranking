@@ -25,14 +25,15 @@ export class JogadoresController {
   }
 
   @Get()
-  async consultarJogadores(
-    @Query('email') email: string,
-  ): Promise<Jogador | Jogador[] | NotFoundException> {
-    if (email) {
-      return await this.jogadoresService.consultarJogadorPorEmail(email);
-    }
-
+  async consultarJogadores(): Promise<Jogador[]> {
     return await this.jogadoresService.consultarJogadores();
+  }
+
+  @Get()
+  async consultarJogador(
+    @Query('email', JogadoresValidacaoParametrosPipe) email: string,
+  ): Promise<Jogador | NotFoundException> {
+    return await this.jogadoresService.consultarJogadorPorEmail(email);
   }
 
   @Delete()
