@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   NotFoundException,
+  Param,
   Post,
   Query,
   UsePipes,
@@ -29,11 +30,11 @@ export class JogadoresController {
     return await this.jogadoresService.consultarJogadores();
   }
 
-  @Get()
+  @Get('/:id')
   async consultarJogador(
-    @Query('email', JogadoresValidacaoParametrosPipe) email: string,
+    @Param('id', JogadoresValidacaoParametrosPipe) id: string,
   ): Promise<Jogador | NotFoundException> {
-    return await this.jogadoresService.consultarJogadorPorEmail(email);
+    return await this.jogadoresService.consultarJogadorPorId(id);
   }
 
   @Delete()
