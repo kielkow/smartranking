@@ -59,7 +59,7 @@ export class JogadoresService {
     return jogador;
   }
 
-  async deletarJogador(email: string): Promise<void> {
-    await this.jogadorModel.deleteOne({ email }).exec();
+  async deletarJogador(id: string): Promise<void> {
+    await this.jogadorModel.deleteOne({ _id: id }).exec();
   }
 }

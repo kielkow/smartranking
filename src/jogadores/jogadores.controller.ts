@@ -6,7 +6,6 @@ import {
   NotFoundException,
   Param,
   Post,
-  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -37,10 +36,10 @@ export class JogadoresController {
     return await this.jogadoresService.consultarJogadorPorId(id);
   }
 
-  @Delete()
+  @Delete('/:id')
   async deletarJogador(
-    @Query('email', JogadoresValidacaoParametrosPipe) email: string,
+    @Param('id', JogadoresValidacaoParametrosPipe) id: string,
   ): Promise<void> {
-    await this.jogadoresService.deletarJogador(email);
+    await this.jogadoresService.deletarJogador(id);
   }
 }
