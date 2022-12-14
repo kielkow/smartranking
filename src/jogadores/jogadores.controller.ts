@@ -6,10 +6,11 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { CriarJogadorDTO } from './dtos/criar-jogador.dto';
+import { JogadorDTO } from './dtos/jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 import { JogadoresService } from './jogadores.service';
 import { JogadoresValidacaoParametrosPipe } from './pipes/jogadores-validacao-parametros.pipe';
@@ -18,15 +19,24 @@ import { JogadoresValidacaoParametrosPipe } from './pipes/jogadores-validacao-pa
 export class JogadoresController {
   constructor(private readonly jogadoresService: JogadoresService) {}
 
-  @Post()
-  @UsePipes(ValidationPipe)
-  async criarAtualizarJogador(@Body() criarJogadorDTO: CriarJogadorDTO) {
-    await this.jogadoresService.criarAtualizarJogador(criarJogadorDTO);
-  }
-
   @Get()
   async consultarJogadores(): Promise<Jogador[]> {
     return await this.jogadoresService.consultarJogadores();
+  }
+
+  @Post()
+  @UsePipes(ValidationPipe)
+  async criarJogador(@Body() jogadorDTO: JogadorDTO) {
+    await this.jogadoresService.criarJogador(jogadorDTO);
+  }
+
+  @Put('/:id')
+  @UsePipes(ValidationPipe)
+  async atualizarJogador(
+    @Body() jogadorDTO: JogadorDTO,
+    @Param('id', JogadoresValidacaoParametrosPipe) id: string,
+  ) {
+    await this.jogadoresService.atualizarJogador(id, jogadorDTO);
   }
 
   @Get('/:id')

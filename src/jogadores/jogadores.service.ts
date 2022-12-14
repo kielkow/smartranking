@@ -1,5 +1,10 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { CriarJogadorDTO } from './dtos/criar-jogador.dto';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { JogadorDTO } from './dtos/jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -12,37 +17,62 @@ export class JogadoresService {
 
   private readonly logger = new Logger(JogadoresService.name);
 
-  async criarAtualizarJogador(criarJogadorDTO: CriarJogadorDTO): Promise<void> {
-    const { email } = criarJogadorDTO;
+  async criarJogador(jogadorDTO: JogadorDTO): Promise<Jogador> {
+    this.logger.log(`criarJogador: ${JSON.stringify(jogadorDTO)}`);
 
-    const jogador = await this.jogadorModel.findOne({ email }).exec();
+    const jogador = new this.jogadorModel(jogadorDTO);
 
-    if (!jogador) {
-      await this.criar(criarJogadorDTO);
-    } else {
-      await this.atualizar(criarJogadorDTO);
+    const jogadorExisteEmail = await this.jogadorModel
+      .findOne({ email: jogadorDTO.email })
+      .exec();
+
+    const jogadorExisteTelefone = await this.jogadorModel
+      .findOne({ telefoneCelular: jogadorDTO.telefoneCelular })
+      .exec();
+
+    if (jogadorExisteEmail || jogadorExisteTelefone) {
+      throw new BadRequestException(
+        'Jogador com este e-mail ou telefone já existe',
+      );
     }
-  }
-
-  private async criar(criarJogadorDTO: CriarJogadorDTO): Promise<Jogador> {
-    const jogador = new this.jogadorModel(criarJogadorDTO);
-
-    this.logger.log(`criarJogador: ${JSON.stringify(jogador)}`);
 
     return await jogador.save();
   }
 
-  private async atualizar(criarJogadorDTO: CriarJogadorDTO): Promise<Jogador> {
-    const jogador = await this.jogadorModel
-      .findOneAndUpdate(
-        { email: criarJogadorDTO.email },
-        { $set: criarJogadorDTO },
-      )
+  async atualizarJogador(id: string, jogadorDTO: JogadorDTO): Promise<Jogador> {
+    this.logger.log(`atualizarJogador: ${JSON.stringify(jogadorDTO)}`);
+
+    const jogadorExisteId = await this.jogadorModel.findOne({ _id: id }).exec();
+
+    if (!jogadorExisteId) throw new NotFoundException('Jogador não encontrado');
+
+    const jogadorExisteEmail = await this.jogadorModel
+      .findOne({ email: jogadorDTO.email })
       .exec();
 
-    this.logger.log(`atualizarJogador: ${JSON.stringify(jogador)}`);
+    const jogadorExisteTelefone = await this.jogadorModel
+      .findOne({ telefoneCelular: jogadorDTO.telefoneCelular })
+      .exec();
 
-    return jogador;
+    if (
+      String(jogadorExisteEmail._id) !== id ||
+      String(jogadorExisteTelefone._id) !== id
+    ) {
+      throw new BadRequestException(
+        'Jogador com este e-mail ou telefone já existe',
+      );
+    }
+
+    const jogadorAtualizado = await this.jogadorModel.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        $set: jogadorDTO,
+      },
+    );
+
+    return jogadorAtualizado;
   }
 
   async consultarJogadores(): Promise<Jogador[]> {
