@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -9,6 +11,7 @@ import {
 import { CategoriasService } from './categorias.service';
 import { CategoriaDTO } from './dtos/categoria.dto';
 import { Categoria } from './interfaces/categoria.interface';
+import { CategoriasValidacaoParametrosPipe } from './pipes/categorias-validacao-parametros.pipe';
 
 @Controller('api/v1/categorias')
 export class CategoriasController {
@@ -23,5 +26,12 @@ export class CategoriasController {
   @Get()
   async consultarCategorias(): Promise<Categoria[]> {
     return await this.categoriasService.consultarCategorias();
+  }
+
+  @Get('/:id')
+  async consultarCategoria(
+    @Param('id', CategoriasValidacaoParametrosPipe) id: string,
+  ): Promise<Categoria | NotFoundException> {
+    return await this.categoriasService.consultarCategoriaPorId(id);
   }
 }
