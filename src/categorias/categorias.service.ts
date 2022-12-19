@@ -12,6 +12,10 @@ export class CategoriasService {
 
   private readonly logger = new Logger(CategoriasService.name);
 
+  async consultarCategorias(): Promise<Categoria[]> {
+    return await this.categoriaModel.find().exec();
+  }
+
   async criarCategoria(categoriaDTO: CategoriaDTO): Promise<Categoria> {
     this.logger.log(`criarCategoria: ${JSON.stringify(categoriaDTO)}`);
 
