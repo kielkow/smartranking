@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -33,5 +34,14 @@ export class CategoriasController {
     @Param('id', CategoriasValidacaoParametrosPipe) id: string,
   ): Promise<Categoria | NotFoundException> {
     return await this.categoriasService.consultarCategoriaPorId(id);
+  }
+
+  @Put('/:id')
+  @UsePipes(ValidationPipe)
+  async atualizarCategoria(
+    @Body() categoriaDTO: CategoriaDTO,
+    @Param('id', CategoriasValidacaoParametrosPipe) id: string,
+  ) {
+    await this.categoriasService.atualizarCategoria(id, categoriaDTO);
   }
 }

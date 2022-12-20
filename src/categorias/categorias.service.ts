@@ -46,4 +46,38 @@ export class CategoriasService {
 
     return categoria;
   }
+
+  async atualizarCategoria(
+    id: string,
+    categoriaDTO: CategoriaDTO,
+  ): Promise<Categoria> {
+    this.logger.log(`atualizarCategoria: ${JSON.stringify(categoriaDTO)}`);
+
+    const categoriaExisteId = await this.categoriaModel
+      .findOne({ _id: id })
+      .exec();
+
+    if (!categoriaExisteId) {
+      throw new NotFoundException('Categoria não encontrada');
+    }
+
+    const categoriaExiste = await this.categoriaModel
+      .findOne({ categoria: categoriaDTO.categoria })
+      .exec();
+
+    if (String(categoriaExiste._id) !== id) {
+      throw new BadRequestException('Categoria com este nome já existe');
+    }
+
+    const categoriaAtualizada = await this.categoriaModel.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        $set: categoriaDTO,
+      },
+    );
+
+    return categoriaAtualizada;
+  }
 }
