@@ -41,7 +41,12 @@ export class CategoriasController {
   async atualizarCategoria(
     @Body() categoriaDTO: CategoriaDTO,
     @Param('id', CategoriasValidacaoParametrosPipe) id: string,
-  ) {
+  ): Promise<void> {
     await this.categoriasService.atualizarCategoria(id, categoriaDTO);
+  }
+
+  @Post('/:categoriaId/jogadores/:jogadorId')
+  async atribuirCategoriaJogador(@Param() params: string[]): Promise<void> {
+    await this.categoriasService.atribuirCategoriaJogador(params);
   }
 }

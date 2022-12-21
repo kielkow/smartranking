@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
 import { CategoriaDTO } from './dtos/categoria.dto';
 import { Categoria } from './interfaces/categoria.interface';
 
@@ -13,6 +14,7 @@ import { Categoria } from './interfaces/categoria.interface';
 export class CategoriasService {
   constructor(
     @InjectModel('Categoria') private readonly categoriaModel: Model<Categoria>,
+    @InjectModel('Jogador') private readonly jogadorModel: Model<Jogador>,
   ) {}
 
   private readonly logger = new Logger(CategoriasService.name);
@@ -79,5 +81,34 @@ export class CategoriasService {
     );
 
     return categoriaAtualizada;
+  }
+
+  async atribuirCategoriaJogador(params: string[]): Promise<void> {
+    const categoriaId = params['categoriaId'];
+    const jogadorId = params['jogadorId'];
+
+    const categoria = await this.categoriaModel
+      .findOne({
+        _id: categoriaId,
+      })
+      .exec();
+
+    if (!categoria) throw new NotFoundException('Categoria não encontrada');
+
+    const jogador = await this.jogadorModel
+      .findOne({
+        _id: jogadorId,
+      })
+      .exec();
+
+    if (!jogador) throw new NotFoundException('Jogador não encontrado');
+
+    if (!categoria.jogadores.includes(jogador._id)) {
+      categoria.jogadores.push(jogador._id);
+    }
+
+    await this.categoriaModel
+      .findOneAndUpdate({ _id: categoria._id }, { $set: categoria })
+      .exec();
   }
 }
