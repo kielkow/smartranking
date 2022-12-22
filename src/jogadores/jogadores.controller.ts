@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -26,7 +25,7 @@ export class JogadoresController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async criarJogador(@Body() jogadorDTO: JogadorDTO) {
+  async criarJogador(@Body() jogadorDTO: JogadorDTO): Promise<void> {
     await this.jogadoresService.criarJogador(jogadorDTO);
   }
 
@@ -35,14 +34,14 @@ export class JogadoresController {
   async atualizarJogador(
     @Body() jogadorDTO: JogadorDTO,
     @Param('id', JogadoresValidacaoParametrosPipe) id: string,
-  ) {
+  ): Promise<void> {
     await this.jogadoresService.atualizarJogador(id, jogadorDTO);
   }
 
   @Get('/:id')
   async consultarJogador(
     @Param('id', JogadoresValidacaoParametrosPipe) id: string,
-  ): Promise<Jogador | NotFoundException> {
+  ): Promise<Jogador> {
     return await this.jogadoresService.consultarJogadorPorId(id);
   }
 

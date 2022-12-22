@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
+import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { CategoriaDTO } from './dtos/categoria.dto';
 import { Categoria } from './interfaces/categoria.interface';
 
@@ -14,7 +14,7 @@ import { Categoria } from './interfaces/categoria.interface';
 export class CategoriasService {
   constructor(
     @InjectModel('Categoria') private readonly categoriaModel: Model<Categoria>,
-    @InjectModel('Jogador') private readonly jogadorModel: Model<Jogador>,
+    private readonly jogadoresService: JogadoresService,
   ) {}
 
   private readonly logger = new Logger(CategoriasService.name);
@@ -95,16 +95,10 @@ export class CategoriasService {
 
     if (!categoria) throw new NotFoundException('Categoria não encontrada');
 
-    const jogador = await this.jogadorModel
-      .findOne({
-        _id: jogadorId,
-      })
-      .exec();
+    await this.jogadoresService.consultarJogadorPorId(jogadorId);
 
-    if (!jogador) throw new NotFoundException('Jogador não encontrado');
-
-    if (!categoria.jogadores.includes(jogador._id)) {
-      categoria.jogadores.push(jogador._id);
+    if (!categoria.jogadores.includes(jogadorId)) {
+      categoria.jogadores.push(jogadorId);
     }
 
     await this.categoriaModel
