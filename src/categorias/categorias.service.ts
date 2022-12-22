@@ -20,7 +20,7 @@ export class CategoriasService {
   private readonly logger = new Logger(CategoriasService.name);
 
   async consultarCategorias(): Promise<Categoria[]> {
-    return await this.categoriaModel.find().exec();
+    return await this.categoriaModel.find().populate('jogadores').exec();
   }
 
   async criarCategoria(categoriaDTO: CategoriaDTO): Promise<Categoria> {
