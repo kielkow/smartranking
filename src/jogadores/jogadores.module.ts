@@ -6,7 +6,12 @@ import { JogadoresService } from './jogadores.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Jogador', schema: JogadorSchema }]),
+    MongooseModule.forFeature([
+      {
+        name: 'Jogador',
+        schema: JogadorSchema,
+      },
+    ]),
   ],
   controllers: [JogadoresController],
   providers: [JogadoresService],

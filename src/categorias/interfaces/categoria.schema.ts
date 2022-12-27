@@ -29,5 +29,8 @@ export const CategoriaSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true, collection: 'categorias' },
+  {
+    timestamps: true,
+    collection: 'categorias',
+  },
 );

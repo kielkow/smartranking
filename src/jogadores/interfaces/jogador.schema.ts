@@ -23,5 +23,8 @@ export const JogadorSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true, collection: 'jogadores' },
+  {
+    timestamps: true,
+    collection: 'jogadores',
+  },
 );
