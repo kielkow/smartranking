@@ -49,6 +49,14 @@ export class CategoriasService {
     return categoria;
   }
 
+  async consultarCategoriaPorJogadorId(jogadorId: string): Promise<Categoria> {
+    const categoria = await this.categoriaModel
+      .findOne({ 'jogadores._id': jogadorId })
+      .exec();
+
+    return categoria;
+  }
+
   async atualizarCategoria(
     id: string,
     categoriaDTO: CategoriaDTO,
