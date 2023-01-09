@@ -55,8 +55,8 @@ export class JogadoresService {
       .exec();
 
     if (
-      String(jogadorExisteEmail._id) !== id ||
-      String(jogadorExisteTelefone._id) !== id
+      (jogadorExisteEmail && String(jogadorExisteEmail._id) !== id) ||
+      (jogadorExisteTelefone && String(jogadorExisteTelefone._id) !== id)
     ) {
       throw new BadRequestException(
         'Jogador com este e-mail ou telefone já existe',
