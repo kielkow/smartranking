@@ -22,6 +22,18 @@ export class DesafiosService {
 
   private readonly logger = new Logger(DesafiosService.name);
 
+  async consultarDesafios(): Promise<Desafio[]> {
+    return await this.desafioModel.find().exec();
+  }
+
+  async consultarDesafioPorJogadorId(jogadorId: string): Promise<Desafio> {
+    const desafio = await this.desafioModel
+      .findOne({ 'jogadores._id': jogadorId })
+      .exec();
+
+    return desafio;
+  }
+
   async criarDesafio(desafioDTO: DesafioDTO): Promise<Desafio> {
     this.logger.log(`criarDesafio: ${JSON.stringify(desafioDTO)}`);
 
