@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -32,5 +33,14 @@ export class DesafiosController {
   @UsePipes(ValidationPipe)
   async criarDesafio(@Body() desafioDTO: DesafioDTO): Promise<void> {
     await this.desafiosService.criarDesafio(desafioDTO);
+  }
+
+  @Put('/:id')
+  @UsePipes(ValidationPipe)
+  async atualizarDesafio(
+    @Body() desafioDTO: DesafioDTO,
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<void> {
+    await this.desafiosService.atualizarDesafio(id, desafioDTO);
   }
 }

@@ -88,4 +88,42 @@ export class DesafiosService {
 
     return await desafio.save();
   }
+
+  async atualizarDesafio(id: string, desafioDTO: DesafioDTO): Promise<Desafio> {
+    this.logger.log(`atualizarDesafio: ${JSON.stringify(desafioDTO)}`);
+
+    const desafioExistente = await this.desafioModel
+      .findOne({ _id: id })
+      .exec();
+
+    if (!desafioExistente) {
+      throw new NotFoundException('Desafio não encontrado');
+    }
+
+    const statusExistente:
+      | DesafioStatus.ACEITO
+      | DesafioStatus.NEGADO
+      | DesafioStatus.CANCELADO =
+      DesafioStatus[desafioDTO.status.toUpperCase()];
+
+    if (!statusExistente) {
+      throw new BadRequestException('Status inválido');
+    }
+
+    const jogadorAtualizado = await this.desafioModel.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        $set: {
+          ...desafioExistente,
+          dataHoraDesafio:
+            desafioDTO.dataHoraDesafio || desafioExistente.dataHoraDesafio,
+          status: desafioDTO.status || desafioExistente.status,
+        },
+      },
+    );
+
+    return jogadorAtualizado;
+  }
 }
