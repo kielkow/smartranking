@@ -113,4 +113,8 @@ export class CategoriasService {
       .findOneAndUpdate({ _id: categoria._id }, { $set: categoria })
       .exec();
   }
+
+  async deletarCategoria(id: string): Promise<void> {
+    await this.categoriaModel.deleteOne({ _id: id }).exec();
+  }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -48,5 +49,12 @@ export class CategoriasController {
   @Post('/:categoriaId/jogadores/:jogadorId')
   async atribuirCategoriaJogador(@Param() params: string[]): Promise<void> {
     await this.categoriasService.atribuirCategoriaJogador(params);
+  }
+
+  @Delete('/:id')
+  async deletarCategoria(
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<void> {
+    await this.categoriasService.deletarCategoria(id);
   }
 }
