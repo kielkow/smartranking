@@ -75,7 +75,7 @@ export class CategoriasService {
       .findOne({ categoria: categoriaDTO.categoria })
       .exec();
 
-    if (String(categoriaExiste._id) !== id) {
+    if (categoriaExiste && String(categoriaExiste._id) !== id) {
       throw new BadRequestException('Categoria com este nome já existe');
     }
 
