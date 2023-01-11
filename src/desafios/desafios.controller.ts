@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -42,5 +43,12 @@ export class DesafiosController {
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<void> {
     await this.desafiosService.atualizarDesafio(id, desafioDTO);
+  }
+
+  @Delete('/:id')
+  async deletarDesafio(
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<void> {
+    await this.desafiosService.deletarDesafio(id);
   }
 }

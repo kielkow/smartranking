@@ -126,4 +126,8 @@ export class DesafiosService {
 
     return jogadorAtualizado;
   }
+
+  async deletarDesafio(id: string): Promise<void> {
+    await this.desafioModel.deleteOne({ _id: id }).exec();
+  }
 }
