@@ -54,6 +54,12 @@ export class CategoriasService {
       .findOne({ where: { 'jogadores._id': jogadorId } })
       .exec();
 
+    if (!categoria) {
+      throw new BadRequestException(
+        `Jogador ${jogadorId} não está em atribuido em nenhuma categoria`,
+      );
+    }
+
     return categoria;
   }
 
