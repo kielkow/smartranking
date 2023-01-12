@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+
 import { CategoriasService } from 'src/categorias/categorias.service';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { DesafioDTO } from './dtos/desafio.dto';
@@ -23,7 +24,21 @@ export class DesafiosService {
   private readonly logger = new Logger(DesafiosService.name);
 
   async consultarDesafios(): Promise<Desafio[]> {
-    return await this.desafioModel.find().exec();
+    return await this.desafioModel
+      .find()
+      .populate({
+        path: 'categoria',
+        select: [
+          '_id',
+          'categoria',
+          'descricao',
+          'eventos',
+          'createdAt',
+          'updatedAt',
+        ],
+      })
+      .populate('jogadores')
+      .exec();
   }
 
   async consultarDesafioPorJogadorId(jogadorId: string): Promise<Desafio> {
@@ -37,47 +52,23 @@ export class DesafiosService {
   async criarDesafio(desafioDTO: DesafioDTO): Promise<Desafio> {
     this.logger.log(`criarDesafio: ${JSON.stringify(desafioDTO)}`);
 
-    const { solicitante } = desafioDTO;
-    const [jogador1, jogador2] = desafioDTO.jogadores;
+    const { solicitante: solicitanteID } = desafioDTO;
+    const [jogadorID1, jogadorID2] = desafioDTO.jogadores;
 
-    const jogador1Exist = await this.jogadoresService.consultarJogadorPorId(
-      jogador1._id,
-    );
-    if (!jogador1Exist) {
-      throw new NotFoundException(
-        `Jogador de ID ${jogador1._id} não foi encontrado`,
-      );
-    }
+    await this.jogadoresService.consultarJogadorPorId(jogadorID1);
 
-    const jogador2Exist = await this.jogadoresService.consultarJogadorPorId(
-      jogador2._id,
-    );
-    if (!jogador2Exist) {
-      throw new NotFoundException(
-        `Jogador de ID ${jogador2._id} não foi encontrado`,
-      );
-    }
+    await this.jogadoresService.consultarJogadorPorId(jogadorID2);
 
-    if (
-      String(solicitante._id) !== String(jogador1._id) &&
-      String(solicitante._id) !== String(jogador2._id)
-    ) {
+    if (solicitanteID !== jogadorID1 && solicitanteID !== jogadorID2) {
       throw new BadRequestException(
         'O jogador solicitante não é um dos jogadores informados no desafio',
       );
     }
 
-    const solicitanteCategoria =
+    const categoria =
       await this.categoriasService.consultarCategoriaPorJogadorId(
-        solicitante._id,
+        solicitanteID,
       );
-    if (!solicitanteCategoria) {
-      throw new BadRequestException(
-        'Jogador solicitante não está em atribuido em nenhuma categoria',
-      );
-    }
-
-    const { categoria } = solicitanteCategoria;
 
     const desafio = new this.desafioModel({
       ...desafioDTO,

@@ -19,7 +19,8 @@ export const DesafioSchema = new mongoose.Schema(
       ref: 'Jogador',
     },
     categoria: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Categoria',
     },
     jogadores: [
       {
