@@ -51,7 +51,7 @@ export class CategoriasService {
 
   async consultarCategoriaPorJogadorId(jogadorId: string): Promise<Categoria> {
     const categoria = await this.categoriaModel
-      .findOne({ 'jogadores._id': jogadorId })
+      .findOne({ where: { 'jogadores._id': jogadorId } })
       .exec();
 
     return categoria;
