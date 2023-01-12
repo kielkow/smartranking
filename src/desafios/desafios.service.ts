@@ -41,12 +41,22 @@ export class DesafiosService {
       .exec();
   }
 
-  async consultarDesafioPorJogadorId(jogadorId: string): Promise<Desafio> {
-    const desafio = await this.desafioModel
-      .findOne({ 'jogadores._id': jogadorId })
+  async consultarDesafiosPorJogadorId(jogadorId: string): Promise<Desafio[]> {
+    return await this.desafioModel
+      .find({ where: { 'jogadores._id': jogadorId } })
+      .populate({
+        path: 'categoria',
+        select: [
+          '_id',
+          'categoria',
+          'descricao',
+          'eventos',
+          'createdAt',
+          'updatedAt',
+        ],
+      })
+      .populate('jogadores')
       .exec();
-
-    return desafio;
   }
 
   async criarDesafio(desafioDTO: DesafioDTO): Promise<Desafio> {

@@ -26,8 +26,8 @@ export class DesafiosController {
   @Get('/jogador/:jogadorId')
   async consultarDesafio(
     @Param('jogadorId', ValidacaoParametrosPipe) jogadorId: string,
-  ): Promise<Desafio> {
-    return await this.desafiosService.consultarDesafioPorJogadorId(jogadorId);
+  ): Promise<Desafio[]> {
+    return await this.desafiosService.consultarDesafiosPorJogadorId(jogadorId);
   }
 
   @Post()
