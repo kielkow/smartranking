@@ -111,7 +111,7 @@ export class DesafiosService {
       throw new BadRequestException('Status inválido');
     }
 
-    const jogadorAtualizado = await this.desafioModel.findOneAndUpdate(
+    const desafioAtualizado = await this.desafioModel.findOneAndUpdate(
       {
         _id: id,
       },
@@ -125,7 +125,7 @@ export class DesafiosService {
       },
     );
 
-    return jogadorAtualizado;
+    return desafioAtualizado;
   }
 
   async deletarDesafio(id: string): Promise<void> {
