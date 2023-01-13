@@ -18,6 +18,4 @@ export class DesafioDTO {
   @ArrayMinSize(2)
   @ArrayMaxSize(2)
   jogadores: Array<string>;
-
-  status: string;
 }

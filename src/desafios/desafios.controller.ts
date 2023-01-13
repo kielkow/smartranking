@@ -9,8 +9,10 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { DesafiosService } from './desafios.service';
+import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
 import { DesafioDTO } from './dtos/desafio.dto';
 import { Desafio } from './interfaces/desafio.interface';
 
@@ -39,10 +41,10 @@ export class DesafiosController {
   @Put('/:id')
   @UsePipes(ValidationPipe)
   async atualizarDesafio(
-    @Body() desafioDTO: DesafioDTO,
+    @Body() atualizarDesafioDTO: AtualizarDesafioDTO,
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<void> {
-    await this.desafiosService.atualizarDesafio(id, desafioDTO);
+    await this.desafiosService.atualizarDesafio(id, atualizarDesafioDTO);
   }
 
   @Delete('/:id')

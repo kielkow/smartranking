@@ -9,6 +9,7 @@ import { Model } from 'mongoose';
 
 import { CategoriasService } from 'src/categorias/categorias.service';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
+import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
 import { DesafioDTO } from './dtos/desafio.dto';
 import { DesafioStatus } from './interfaces/desafio-status.enum';
 import { Desafio } from './interfaces/desafio.interface';
@@ -90,8 +91,11 @@ export class DesafiosService {
     return await desafio.save();
   }
 
-  async atualizarDesafio(id: string, desafioDTO: DesafioDTO): Promise<Desafio> {
-    this.logger.log(`atualizarDesafio: ${JSON.stringify(desafioDTO)}`);
+  async atualizarDesafio(
+    id: string,
+    atualizarDesafioDTO: AtualizarDesafioDTO,
+  ): Promise<Desafio> {
+    this.logger.log(`atualizarDesafio: ${JSON.stringify(atualizarDesafioDTO)}`);
 
     const desafioExistente = await this.desafioModel
       .findOne({ _id: id })
@@ -105,7 +109,7 @@ export class DesafiosService {
       | DesafioStatus.ACEITO
       | DesafioStatus.NEGADO
       | DesafioStatus.CANCELADO =
-      DesafioStatus[desafioDTO.status.toUpperCase()];
+      DesafioStatus[atualizarDesafioDTO.status.toUpperCase()];
 
     if (!statusExistente) {
       throw new BadRequestException('Status inválido');
@@ -117,10 +121,8 @@ export class DesafiosService {
       },
       {
         $set: {
-          ...desafioExistente,
-          dataHoraDesafio:
-            desafioDTO.dataHoraDesafio || desafioExistente.dataHoraDesafio,
-          status: desafioDTO.status || desafioExistente.status,
+          dataHoraDesafio: atualizarDesafioDTO.dataHoraDesafio,
+          status: atualizarDesafioDTO.status,
         },
       },
     );
