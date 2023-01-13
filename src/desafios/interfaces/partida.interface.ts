@@ -1,9 +1,10 @@
 import { Document } from 'mongoose';
 
+import { Categoria } from 'src/categorias/interfaces/categoria.interface';
 import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
 
 export interface Partida extends Document {
-  categoria: string;
+  categoria: Categoria;
 
   jogadores: Array<Jogador>;
 

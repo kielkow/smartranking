@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 export const PartidaSchema = new mongoose.Schema(
   {
     categoria: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Categoria',
     },
     jogadores: [
       {
