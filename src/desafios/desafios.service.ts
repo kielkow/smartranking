@@ -42,6 +42,16 @@ export class DesafiosService {
       .exec();
   }
 
+  async consultarDesafioPorId(id: string): Promise<Desafio> {
+    const desafio = await this.desafioModel.findOne({ _id: id }).exec();
+
+    if (!desafio) {
+      throw new NotFoundException(`Desafio com ID ${id} não encontrado`);
+    }
+
+    return desafio;
+  }
+
   async consultarDesafiosPorJogadorId(jogadorId: string): Promise<Desafio[]> {
     return await this.desafioModel
       .find({ where: { 'jogadores._id': jogadorId } })
