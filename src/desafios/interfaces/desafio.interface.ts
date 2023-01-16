@@ -3,7 +3,7 @@ import { Categoria } from 'src/categorias/interfaces/categoria.interface';
 
 import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
 import { DesafioStatus } from './desafio-status.enum';
-import { Partida } from './partida.interface';
+import { Partida } from '../../partidas/interfaces/partida.interface';
 
 export interface Desafio extends Document {
   dataHoraDesafio: Date;
