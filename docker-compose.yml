@@ -1,4 +1,5 @@
 version: "3"
+
 services: 
   mongo:
     container_name: mongo-container
@@ -8,6 +9,7 @@ services:
       - ./data:/data/db
     ports:
       - "27017:27017"
+
   api:
     container_name: api-container
     image: node:12
