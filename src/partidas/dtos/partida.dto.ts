@@ -1,11 +1,18 @@
-import { IsNotEmpty } from 'class-validator';
-import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
-import { Resultado } from '../interfaces/partida.interface';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 
-export class AtribuirDesafioPartidaDTO {
+export class PartidaDTO {
   @IsNotEmpty()
-  def: Jogador;
+  @IsString()
+  categoria: string;
 
-  @IsNotEmpty()
-  resultado: Array<Resultado>;
+  @IsArray()
+  @ArrayMinSize(2)
+  @ArrayMaxSize(2)
+  jogadores: Array<string>;
 }
