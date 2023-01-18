@@ -75,4 +75,8 @@ export class PartidasService {
 
     return partida;
   }
+
+  async deletarPartida(id: string): Promise<void> {
+    await this.partidaModel.deleteOne({ _id: id }).exec();
+  }
 }

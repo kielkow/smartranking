@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -32,5 +33,12 @@ export class PartidasController {
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<Partida> {
     return await this.partidasService.consultarPartidaPorId(id);
+  }
+
+  @Delete('/:id')
+  async deletarPartida(
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<void> {
+    await this.partidasService.deletarPartida(id);
   }
 }
