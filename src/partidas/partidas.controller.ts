@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -9,6 +10,7 @@ import {
 import { PartidasService } from './partidas.service';
 import { Partida } from './interfaces/partida.interface';
 import { PartidaDTO } from './dtos/partida.dto';
+import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 
 @Controller('api/v1/partidas')
 export class PartidasController {
@@ -23,5 +25,12 @@ export class PartidasController {
   @UsePipes(ValidationPipe)
   async criarPartida(@Body() partidaDTO: PartidaDTO): Promise<void> {
     await this.partidasService.criarPartida(partidaDTO);
+  }
+
+  @Get('/:id')
+  async consultarPartida(
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<Partida> {
+    return await this.partidasService.consultarPartidaPorId(id);
   }
 }

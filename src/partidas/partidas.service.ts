@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Partida } from './interfaces/partida.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -50,5 +50,29 @@ export class PartidasService {
     });
 
     return await partida.save();
+  }
+
+  async consultarPartidaPorId(id: string): Promise<Partida> {
+    const partida = await this.partidaModel
+      .findOne({ _id: id })
+      .populate({
+        path: 'categoria',
+        select: [
+          '_id',
+          'categoria',
+          'descricao',
+          'eventos',
+          'createdAt',
+          'updatedAt',
+        ],
+      })
+      .populate('jogadores')
+      .exec();
+
+    if (!partida) {
+      throw new NotFoundException(`Partida com ID ${id} não encontrada`);
+    }
+
+    return partida;
   }
 }
