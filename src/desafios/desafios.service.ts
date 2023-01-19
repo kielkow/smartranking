@@ -43,11 +43,27 @@ export class DesafiosService {
         ],
       })
       .populate('jogadores')
+      .populate('partida')
       .exec();
   }
 
   async consultarDesafioPorId(id: string): Promise<Desafio> {
-    const desafio = await this.desafioModel.findOne({ _id: id }).exec();
+    const desafio = await this.desafioModel
+      .findOne({ _id: id })
+      .populate({
+        path: 'categoria',
+        select: [
+          '_id',
+          'categoria',
+          'descricao',
+          'eventos',
+          'createdAt',
+          'updatedAt',
+        ],
+      })
+      .populate('jogadores')
+      .populate('partida')
+      .exec();
 
     if (!desafio) {
       throw new NotFoundException(`Desafio com ID ${id} não encontrado`);
