@@ -9,8 +9,11 @@ import { Model } from 'mongoose';
 
 import { CategoriasService } from 'src/categorias/categorias.service';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
+import { PartidasService } from 'src/partidas/partidas.service';
+
 import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
 import { DesafioDTO } from './dtos/desafio.dto';
+
 import { DesafioStatus } from './interfaces/desafio-status.enum';
 import { Desafio } from './interfaces/desafio.interface';
 
@@ -20,6 +23,7 @@ export class DesafiosService {
     @InjectModel('Desafio') private readonly desafioModel: Model<Desafio>,
     private readonly jogadoresService: JogadoresService,
     private readonly categoriasService: CategoriasService,
+    private readonly partidasService: PartidasService,
   ) {}
 
   private readonly logger = new Logger(DesafiosService.name);
@@ -91,14 +95,26 @@ export class DesafiosService {
         solicitanteID,
       );
 
-    const desafio = new this.desafioModel({
-      ...desafioDTO,
-      categoria,
-      dataHoraSolicitacao: new Date(),
-      status: DesafioStatus.PENDENTE,
+    const partida = await this.partidasService.criarPartida({
+      categoria: categoria._id,
+      jogadores: desafioDTO.jogadores,
     });
 
-    return await desafio.save();
+    try {
+      const desafio = new this.desafioModel({
+        ...desafioDTO,
+        categoria,
+        partida,
+        dataHoraSolicitacao: new Date(),
+        status: DesafioStatus.PENDENTE,
+      });
+
+      return await desafio.save();
+    } catch (error) {
+      await this.partidasService.deletarPartida(partida._id);
+
+      throw new Error(error);
+    }
   }
 
   async atualizarDesafio(
