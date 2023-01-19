@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { PartidasService } from './partidas.service';
 import { Partida } from './interfaces/partida.interface';
 import { PartidaDTO } from './dtos/partida.dto';
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
+import { AtualizarPartidaDTO } from './dtos/atualizar-partida.dto';
 
 @Controller('api/v1/partidas')
 export class PartidasController {
@@ -33,6 +35,15 @@ export class PartidasController {
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<Partida> {
     return await this.partidasService.consultarPartidaPorId(id);
+  }
+
+  @Put('/:id')
+  @UsePipes(ValidationPipe)
+  async atualizarPartida(
+    @Body() atualizarPartidaDTO: AtualizarPartidaDTO,
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<void> {
+    await this.partidasService.atualizarPartida(id, atualizarPartidaDTO);
   }
 
   @Delete('/:id')

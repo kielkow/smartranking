@@ -1,8 +1,17 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Partida } from './interfaces/partida.interface';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+
+import { Partida } from './interfaces/partida.interface';
+
 import { PartidaDTO } from './dtos/partida.dto';
+import { AtualizarPartidaDTO } from './dtos/atualizar-partida.dto';
+
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { CategoriasService } from 'src/categorias/categorias.service';
 
@@ -74,6 +83,45 @@ export class PartidasService {
     }
 
     return partida;
+  }
+
+  async atualizarPartida(
+    id: string,
+    atualizarPartidaDTO: AtualizarPartidaDTO,
+  ): Promise<Partida> {
+    this.logger.log(`atualizarPartida: ${JSON.stringify(atualizarPartidaDTO)}`);
+
+    const partidaExistente = await this.partidaModel
+      .findOne({ _id: id })
+      .exec();
+
+    if (!partidaExistente) {
+      throw new NotFoundException(
+        `Partida de ID ${partidaExistente._id} não encontrada`,
+      );
+    }
+
+    await this.jogadoresService.consultarJogadorPorId(atualizarPartidaDTO.def);
+
+    if (!String(partidaExistente.jogadores).includes(atualizarPartidaDTO.def)) {
+      throw new BadRequestException(
+        `Jogador de ID ${atualizarPartidaDTO.def} não faz parte da partida`,
+      );
+    }
+
+    const partidaAtualizada = await this.partidaModel.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        $set: {
+          def: atualizarPartidaDTO.def,
+          resultado: atualizarPartidaDTO.resultado,
+        },
+      },
+    );
+
+    return partidaAtualizada;
   }
 
   async deletarPartida(id: string): Promise<void> {
