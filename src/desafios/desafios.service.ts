@@ -10,6 +10,7 @@ import { Model } from 'mongoose';
 import { CategoriasService } from 'src/categorias/categorias.service';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { PartidasService } from 'src/partidas/partidas.service';
+import { AtribuirDesafioPartidaDTO } from './dtos/atribuir-desafio-partida.dto';
 
 import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
 import { DesafioDTO } from './dtos/desafio.dto';
@@ -174,5 +175,38 @@ export class DesafiosService {
 
   async deletarDesafio(id: string): Promise<void> {
     await this.desafioModel.deleteOne({ _id: id }).exec();
+  }
+
+  async atribuirDesafioPartida(
+    id: string,
+    atribuirDesafioPartidaDTO: AtribuirDesafioPartidaDTO,
+  ): Promise<Desafio> {
+    this.logger.log(
+      `atribuirDesafioPartida: ${JSON.stringify(atribuirDesafioPartidaDTO)}`,
+    );
+
+    const desafio = await this.desafioModel.findOne({ _id: id }).exec();
+
+    if (!desafio) {
+      throw new NotFoundException('Desafio não encontrado');
+    }
+
+    await this.partidasService.atualizarPartida(
+      desafio.partida._id,
+      atribuirDesafioPartidaDTO,
+    );
+
+    const desafioAtualizado = await this.desafioModel.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        $set: {
+          status: DesafioStatus.REALIZADO,
+        },
+      },
+    );
+
+    return desafioAtualizado;
   }
 }

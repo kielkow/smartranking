@@ -12,6 +12,7 @@ import {
 
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { DesafiosService } from './desafios.service';
+import { AtribuirDesafioPartidaDTO } from './dtos/atribuir-desafio-partida.dto';
 import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
 import { DesafioDTO } from './dtos/desafio.dto';
 import { Desafio } from './interfaces/desafio.interface';
@@ -59,5 +60,17 @@ export class DesafiosController {
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<void> {
     await this.desafiosService.deletarDesafio(id);
+  }
+
+  @Put('/:id/atribuirpartida')
+  @UsePipes(ValidationPipe)
+  async atribuirDesafioPartida(
+    @Body() atribuirDesafioPartidaDTO: AtribuirDesafioPartidaDTO,
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<void> {
+    await this.desafiosService.atribuirDesafioPartida(
+      id,
+      atribuirDesafioPartidaDTO,
+    );
   }
 }
