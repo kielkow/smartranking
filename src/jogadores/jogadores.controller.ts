@@ -39,7 +39,7 @@ export class JogadoresController {
   }
 
   @Get('/:id')
-  async consultarJogador(
+  async consultarJogadorPorId(
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<Jogador> {
     return await this.jogadoresService.consultarJogadorPorId(id);

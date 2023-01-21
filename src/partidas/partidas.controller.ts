@@ -31,7 +31,7 @@ export class PartidasController {
   }
 
   @Get('/:id')
-  async consultarPartida(
+  async consultarPartidaPorId(
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<Partida> {
     return await this.partidasService.consultarPartidaPorId(id);

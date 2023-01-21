@@ -31,7 +31,7 @@ export class CategoriasController {
   }
 
   @Get('/:id')
-  async consultarCategoria(
+  async consultarCategoriaPorId(
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<Categoria | NotFoundException> {
     return await this.categoriasService.consultarCategoriaPorId(id);

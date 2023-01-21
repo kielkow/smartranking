@@ -27,7 +27,7 @@ export class DesafiosController {
   }
 
   @Get('/:id')
-  async consultarDesafio(
+  async consultarDesafioPorId(
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<Desafio> {
     return await this.desafiosService.consultarDesafioPorId(id);
