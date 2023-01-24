@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 export const RankingSchema = new mongoose.Schema(
   {
     desafio: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Desafio',
     },
     partida: {
       type: mongoose.Schema.Types.ObjectId,
