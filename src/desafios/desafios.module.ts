@@ -21,5 +21,6 @@ import { DesafioSchema } from './interfaces/desafio.schema';
   ],
   controllers: [DesafiosController],
   providers: [DesafiosService],
+  exports: [DesafiosService],
 })
 export class DesafiosModule {}
