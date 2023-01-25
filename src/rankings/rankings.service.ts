@@ -26,10 +26,48 @@ export class RankingsService {
   async consultarRankings(): Promise<Ranking[]> {
     return await this.rankingModel
       .find()
-      .populate('desafio')
-      .populate('partida')
-      .populate('categoria')
-      .populate('jogador')
+      .populate({
+        path: 'desafio',
+        select: [
+          '_id',
+          'dataHoraDesafio',
+          'status',
+          'dataHoraSolicitacao',
+          'solicitante',
+          'jogadores',
+          'createdAt',
+          'updatedAt',
+        ],
+      })
+      .populate({
+        path: 'partida',
+        select: ['_id', 'def', 'resultado', 'createdAt', 'updatedAt'],
+      })
+      .populate({
+        path: 'categoria',
+        select: [
+          '_id',
+          'categoria',
+          'descricao',
+          'eventos',
+          'createdAt',
+          'updatedAt',
+        ],
+      })
+      .populate({
+        path: 'jogador',
+        select: [
+          '_id',
+          'nome',
+          'email',
+          'telefoneCelular',
+          'urlFotoJogador',
+          'posicaoRanking',
+          'ranking',
+          'createdAt',
+          'updatedAt',
+        ],
+      })
       .exec();
   }
 
