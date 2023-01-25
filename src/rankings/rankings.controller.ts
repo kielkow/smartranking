@@ -1,4 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { RankingDTO } from './dtos/ranking.dto';
 
 import { Ranking } from './interfaces/ranking.interface';
 
@@ -11,5 +19,11 @@ export class RankingsController {
   @Get()
   async consultarRankings(): Promise<Ranking[]> {
     return await this.rankingsService.consultarRankings();
+  }
+
+  @Post()
+  @UsePipes(ValidationPipe)
+  async criarRanking(@Body() rankingDTO: RankingDTO): Promise<void> {
+    await this.rankingsService.criarRanking(rankingDTO);
   }
 }

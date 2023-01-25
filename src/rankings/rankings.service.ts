@@ -9,6 +9,8 @@ import { PartidasService } from 'src/partidas/partidas.service';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { CategoriasService } from 'src/categorias/categorias.service';
 
+import { RankingDTO } from './dtos/ranking.dto';
+
 @Injectable()
 export class RankingsService {
   constructor(
@@ -29,5 +31,37 @@ export class RankingsService {
       .populate('categoria')
       .populate('jogador')
       .exec();
+  }
+
+  async criarRanking(rankingDTO: RankingDTO): Promise<Ranking> {
+    this.logger.log(`criarRanking: ${JSON.stringify(rankingDTO)}`);
+
+    const desafio = await this.desafiosService.consultarDesafioPorId(
+      rankingDTO.desafio,
+    );
+
+    const partida = await this.partidasService.consultarPartidaPorId(
+      desafio.partida._id,
+    );
+
+    const categoria = await this.categoriasService.consultarCategoriaPorId(
+      desafio.categoria._id,
+    );
+
+    const jogador = await this.jogadoresService.consultarJogadorPorId(
+      partida.def,
+    );
+
+    const ranking = new this.rankingModel({
+      desafio,
+      partida,
+      categoria,
+      jogador,
+      evento: categoria.eventos[0].nome,
+      operacao: categoria.eventos[0].operacao,
+      pontos: String(categoria.eventos[0].valor),
+    });
+
+    return await ranking.save();
   }
 }
