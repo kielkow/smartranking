@@ -39,9 +39,7 @@ export class CategoriasService {
     return await categoria.save();
   }
 
-  async consultarCategoriaPorId(
-    id: string,
-  ): Promise<Categoria | NotFoundException> {
+  async consultarCategoriaPorId(id: string): Promise<Categoria> {
     const categoria = await this.categoriaModel.findOne({ _id: id }).exec();
 
     if (!categoria) throw new NotFoundException('Categoria não encontrada');

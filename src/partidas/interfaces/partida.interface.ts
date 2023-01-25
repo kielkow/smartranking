@@ -8,7 +8,7 @@ export interface Partida extends Document {
 
   jogadores: Array<Jogador>;
 
-  def: Jogador;
+  def: string;
 
   resultado: Array<Resultado>;
 }
