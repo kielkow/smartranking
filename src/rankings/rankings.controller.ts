@@ -2,10 +2,13 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+
+import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { RankingDTO } from './dtos/ranking.dto';
 
 import { Ranking } from './interfaces/ranking.interface';
@@ -25,5 +28,12 @@ export class RankingsController {
   @UsePipes(ValidationPipe)
   async criarRanking(@Body() rankingDTO: RankingDTO): Promise<void> {
     await this.rankingsService.criarRanking(rankingDTO);
+  }
+
+  @Get('/:id')
+  async consultarRankingPorId(
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<Ranking> {
+    return await this.rankingsService.consultarRankingPorId(id);
   }
 }
