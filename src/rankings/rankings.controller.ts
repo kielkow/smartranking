@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -35,5 +36,12 @@ export class RankingsController {
     @Param('id', ValidacaoParametrosPipe) id: string,
   ): Promise<Ranking> {
     return await this.rankingsService.consultarRankingPorId(id);
+  }
+
+  @Delete('/:id')
+  async deletarRanking(
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ): Promise<void> {
+    await this.rankingsService.deletarRanking(id);
   }
 }

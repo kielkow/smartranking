@@ -156,4 +156,8 @@ export class RankingsService {
 
     return ranking;
   }
+
+  async deletarRanking(id: string): Promise<void> {
+    await this.rankingModel.deleteOne({ _id: id }).exec();
+  }
 }
