@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -22,7 +23,13 @@ export class DesafiosController {
   constructor(private readonly desafiosService: DesafiosService) {}
 
   @Get()
-  async consultarDesafios(): Promise<Desafio[]> {
+  async consultarDesafios(
+    @Query('id') id: string,
+  ): Promise<Desafio[] | Desafio> {
+    if (id) {
+      return await this.desafiosService.consultarDesafioPorId(id);
+    }
+
     return await this.desafiosService.consultarDesafios();
   }
 
