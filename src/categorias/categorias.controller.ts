@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -26,7 +27,13 @@ export class CategoriasController {
   }
 
   @Get()
-  async consultarCategorias(): Promise<Categoria[]> {
+  async consultarCategorias(
+    @Query('id') id: string,
+  ): Promise<Categoria[] | Categoria> {
+    if (id) {
+      return await this.categoriasService.consultarCategoriaPorId(id);
+    }
+
     return await this.categoriasService.consultarCategorias();
   }
 
