@@ -74,6 +74,8 @@ export class DesafiosService {
   }
 
   async consultarDesafiosPorJogadorId(jogadorId: string): Promise<Desafio[]> {
+    await this.jogadoresService.consultarJogadorPorId(jogadorId);
+
     return await this.desafioModel
       .find({ where: { 'jogadores._id': jogadorId } })
       .populate({
