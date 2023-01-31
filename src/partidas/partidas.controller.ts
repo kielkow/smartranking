@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -20,7 +21,13 @@ export class PartidasController {
   constructor(private readonly partidasService: PartidasService) {}
 
   @Get()
-  async consultarPartidas(): Promise<Partida[]> {
+  async consultarPartidas(
+    @Query('id') id: string,
+  ): Promise<Partida[] | Partida> {
+    if (id) {
+      return await this.partidasService.consultarPartidaPorId(id);
+    }
+
     return await this.partidasService.consultarPartidas();
   }
 
