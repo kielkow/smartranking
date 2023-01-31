@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,7 +20,13 @@ export class JogadoresController {
   constructor(private readonly jogadoresService: JogadoresService) {}
 
   @Get()
-  async consultarJogadores(): Promise<Jogador[]> {
+  async consultarJogadores(
+    @Query('id') id: string,
+  ): Promise<Jogador[] | Jogador> {
+    if (id) {
+      return await this.jogadoresService.consultarJogadorPorId(id);
+    }
+
     return await this.jogadoresService.consultarJogadores();
   }
 
