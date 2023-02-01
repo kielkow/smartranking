@@ -126,6 +126,7 @@ export class DesafiosService {
         partida,
         dataHoraSolicitacao: new Date(),
         status: DesafioStatus.PENDENTE,
+        dataHoraResposta: null,
       });
 
       return await desafio.save();
@@ -140,39 +141,39 @@ export class DesafiosService {
     id: string,
     atualizarDesafioDTO: AtualizarDesafioDTO,
   ): Promise<Desafio> {
-    this.logger.log(`atualizarDesafio: ${JSON.stringify(atualizarDesafioDTO)}`);
+    try {
+      this.logger.log(
+        `atualizarDesafio: ${JSON.stringify(atualizarDesafioDTO)}`,
+      );
 
-    const desafioExistente = await this.desafioModel
-      .findOne({ _id: id })
-      .exec();
+      const desafio = await this.desafioModel.findById(id).exec();
+      if (!desafio) {
+        throw new NotFoundException('Desafio não encontrado');
+      }
 
-    if (!desafioExistente) {
-      throw new NotFoundException('Desafio não encontrado');
-    }
+      if (atualizarDesafioDTO.status) {
+        const statusAtualizado = DesafioStatus[atualizarDesafioDTO.status];
+        desafio.status = statusAtualizado;
+        desafio.dataHoraResposta = new Date();
+      }
 
-    const statusExistente:
-      | DesafioStatus.ACEITO
-      | DesafioStatus.NEGADO
-      | DesafioStatus.CANCELADO =
-      DesafioStatus[atualizarDesafioDTO.status.toUpperCase()];
+      if (atualizarDesafioDTO.dataHoraDesafio) {
+        desafio.dataHoraDesafio = atualizarDesafioDTO.dataHoraDesafio;
+      }
 
-    if (!statusExistente) {
-      throw new BadRequestException('Status inválido');
-    }
-
-    const desafioAtualizado = await this.desafioModel.findOneAndUpdate(
-      {
-        _id: id,
-      },
-      {
-        $set: {
-          dataHoraDesafio: atualizarDesafioDTO.dataHoraDesafio,
-          status: atualizarDesafioDTO.status,
+      const desafioAtualizado = await this.desafioModel.findOneAndUpdate(
+        {
+          _id: id,
         },
-      },
-    );
+        {
+          $set: desafio,
+        },
+      );
 
-    return desafioAtualizado;
+      return desafioAtualizado;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async deletarDesafio(id: string): Promise<void> {
