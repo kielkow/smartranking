@@ -1,11 +1,11 @@
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class AtualizarDesafioDTO {
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
   dataHoraDesafio: Date;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   status: string;
 }
