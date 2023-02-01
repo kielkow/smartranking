@@ -10,13 +10,15 @@ export class DesafioStatusPipe implements PipeTransform {
   ];
 
   transform(value: any) {
-    const status = value.status.toUpperCase();
+    if (value.status) {
+      const status = value.status.toUpperCase();
 
-    if (!this.statusValido(status)) {
-      throw new BadRequestException(`${status} é um status invalido.`);
+      if (!this.statusValido(status)) {
+        throw new BadRequestException(`${status} é um status invalido.`);
+      }
+
+      value.status = status;
     }
-
-    value.status = value.status.toUpperCase();
 
     return value;
   }
