@@ -178,7 +178,24 @@ export class DesafiosService {
   }
 
   async deletarDesafio(id: string): Promise<void> {
-    await this.desafioModel.deleteOne({ _id: id }).exec();
+    const desafio = await this.desafioModel.findById(id).exec();
+
+    if (!desafio) {
+      throw new BadRequestException(`Desafio ${id} não encontrado`);
+    }
+
+    desafio.status = DesafioStatus.CANCELADO;
+
+    await this.desafioModel
+      .findOneAndUpdate(
+        {
+          _id: id,
+        },
+        {
+          $set: desafio,
+        },
+      )
+      .exec();
   }
 
   async atribuirDesafioPartida(
