@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
@@ -133,7 +134,7 @@ export class DesafiosService {
     } catch (error) {
       await this.partidasService.deletarPartida(partida._id);
 
-      throw new Error(error);
+      throw new InternalServerErrorException();
     }
   }
 
@@ -188,7 +189,7 @@ export class DesafiosService {
       `atribuirDesafioPartida: ${JSON.stringify(atribuirDesafioPartidaDTO)}`,
     );
 
-    const desafio = await this.desafioModel.findOne({ _id: id }).exec();
+    const desafio = await this.desafioModel.findById(id).exec();
 
     if (!desafio) {
       throw new NotFoundException('Desafio não encontrado');
