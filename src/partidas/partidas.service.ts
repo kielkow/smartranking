@@ -91,9 +91,7 @@ export class PartidasService {
   ): Promise<Partida> {
     this.logger.log(`atualizarPartida: ${JSON.stringify(atualizarPartidaDTO)}`);
 
-    const partidaExistente = await this.partidaModel
-      .findById(id)
-      .exec();
+    const partidaExistente = await this.partidaModel.findById(id).exec();
 
     if (!partidaExistente) {
       throw new NotFoundException(
