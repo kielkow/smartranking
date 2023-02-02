@@ -92,7 +92,7 @@ export class PartidasService {
     this.logger.log(`atualizarPartida: ${JSON.stringify(atualizarPartidaDTO)}`);
 
     const partidaExistente = await this.partidaModel
-      .findOne({ _id: id })
+      .findById(id)
       .exec();
 
     if (!partidaExistente) {

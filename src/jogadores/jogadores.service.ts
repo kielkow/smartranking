@@ -42,7 +42,7 @@ export class JogadoresService {
   async atualizarJogador(id: string, jogadorDTO: JogadorDTO): Promise<Jogador> {
     this.logger.log(`atualizarJogador: ${JSON.stringify(jogadorDTO)}`);
 
-    const jogadorExisteId = await this.jogadorModel.findOne({ _id: id }).exec();
+    const jogadorExisteId = await this.jogadorModel.findById(id).exec();
 
     if (!jogadorExisteId) throw new NotFoundException('Jogador não encontrado');
 
@@ -80,7 +80,7 @@ export class JogadoresService {
   }
 
   async consultarJogadorPorId(id: string): Promise<Jogador> {
-    const jogador = await this.jogadorModel.findOne({ _id: id }).exec();
+    const jogador = await this.jogadorModel.findById(id).exec();
 
     if (!jogador) {
       throw new NotFoundException(`Jogador com ID ${id} não encontrado`);

@@ -40,7 +40,7 @@ export class CategoriasService {
   }
 
   async consultarCategoriaPorId(id: string): Promise<Categoria> {
-    const categoria = await this.categoriaModel.findOne({ _id: id }).exec();
+    const categoria = await this.categoriaModel.findById(id).exec();
 
     if (!categoria) throw new NotFoundException('Categoria não encontrada');
 
@@ -67,9 +67,7 @@ export class CategoriasService {
   ): Promise<Categoria> {
     this.logger.log(`atualizarCategoria: ${JSON.stringify(categoriaDTO)}`);
 
-    const categoriaExisteId = await this.categoriaModel
-      .findOne({ _id: id })
-      .exec();
+    const categoriaExisteId = await this.categoriaModel.findById(id).exec();
 
     if (!categoriaExisteId) {
       throw new NotFoundException('Categoria não encontrada');
