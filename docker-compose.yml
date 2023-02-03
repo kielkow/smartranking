@@ -1,14 +1,25 @@
 version: "3"
 
-services: 
+services:
   mongo:
     container_name: mongo-container
     image: mongo:3
     restart: always
-    volumes: 
+    volumes:
       - ./data:/data/db
     ports:
       - "27017:27017"
+
+  rabbitmq:
+    container_name: rabbitmq-container
+    image: rabbitmq:3-management
+    restart: always
+    volumes:
+      - /docker/rabbitmq/data:/var/lib/rabbitmq
+      - /docker/rabbitmq/log:/var/log/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   api:
     container_name: api-container
@@ -25,3 +36,4 @@ services:
       - "3000:3000"
     links:
       - mongo
+      - rabbitmq
