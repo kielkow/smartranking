@@ -24,7 +24,7 @@ export class AppController {
     this.clientAdminBackend = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
-        urls: ['http://guest:guest@localhost:15672/smartranking'],
+        urls: ['amqp://guest:guest@localhost:5672'],
         queue: 'admin-backend',
       },
     });
