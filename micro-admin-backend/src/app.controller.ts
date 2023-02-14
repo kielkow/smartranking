@@ -23,10 +23,10 @@ export class AppController {
     @Payload() categoria: Categoria,
     @Ctx() context: RmqContext,
   ) {
+    this.logger.log(`categoria: ${JSON.stringify(categoria)}`);
+
     const channel = context.getChannelRef();
     const originalMessage = context.getMessage();
-
-    this.logger.log(`categoria: ${JSON.stringify(categoria)}`);
 
     try {
       await this.appService.criarCategoria(categoria);
@@ -46,11 +46,19 @@ export class AppController {
   @MessagePattern('consultar-categorias')
   async consultarCategorias(
     @Payload() id: string,
+    @Ctx() context: RmqContext,
   ): Promise<Categoria[] | Categoria> {
     this.logger.log(`categoriaID: ${id}`);
 
-    if (id) return await this.appService.consultarCategoriaPorID(id);
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
 
-    return await this.appService.consultarCategorias();
+    try {
+      if (id) return await this.appService.consultarCategoriaPorID(id);
+
+      return await this.appService.consultarCategorias();
+    } finally {
+      await channel.ack(originalMessage);
+    }
   }
 }
