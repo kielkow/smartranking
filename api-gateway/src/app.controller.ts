@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Logger,
   Param,
@@ -65,5 +66,12 @@ export class AppController {
       id,
       categoria: atualizarCategoriaDTO,
     });
+  }
+
+  @Delete('categorias/:id')
+  deletarCategoria(@Param('id') id: string) {
+    this.logger.log(`deletar-categoria: ${id}`);
+
+    this.clientAdminBackend.emit('deletar-categoria', id);
   }
 }

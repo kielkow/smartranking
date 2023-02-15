@@ -91,4 +91,26 @@ export class AppController {
       if (filterAckError) await channel.ack(originalMessage);
     }
   }
+
+  @EventPattern('deletar-categoria')
+  async deletarCategoria(@Payload() id: string, @Ctx() context: RmqContext) {
+    this.logger.log(`deletar-categoria: ${id}`);
+
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      await this.appService.deletarCategoria(id);
+
+      await channel.ack(originalMessage);
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      const filterAckError = ackErrors.filter((ackError) =>
+        error.message.includes(ackError),
+      );
+
+      if (filterAckError) await channel.ack(originalMessage);
+    }
+  }
 }

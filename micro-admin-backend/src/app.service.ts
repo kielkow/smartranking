@@ -62,4 +62,16 @@ export class AppService {
       throw new RpcException(error.message);
     }
   }
+
+  async deletarCategoria(id: string): Promise<void> {
+    try {
+      this.logger.log(id);
+
+      await this.categoriaModel.findByIdAndDelete({ _id: id }).exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
 }
