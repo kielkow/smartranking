@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { CategoriaController } from './categorias/caregoria.controller';
 
 @Module({
   imports: [],
-  controllers: [AppController],
+  controllers: [CategoriaController],
   providers: [],
 })
 export class AppModule {}

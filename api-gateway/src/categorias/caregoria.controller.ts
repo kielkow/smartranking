@@ -17,13 +17,13 @@ import {
   Transport,
 } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { AtualizarCategoriaDTO } from './dtos/atualizar-categoria.dto';
 
 import { CategoriaDTO } from './dtos/categoria.dto';
+import { AtualizarCategoriaDTO } from './dtos/atualizar-categoria.dto';
 
 @Controller('api/v1')
-export class AppController {
-  private logger = new Logger(AppController.name);
+export class CategoriaController {
+  private logger = new Logger(CategoriaController.name);
 
   private clientAdminBackend: ClientProxy;
 
