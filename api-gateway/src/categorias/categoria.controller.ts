@@ -20,6 +20,7 @@ import { Observable } from 'rxjs';
 
 import { CategoriaDTO } from './dtos/categoria.dto';
 import { AtualizarCategoriaDTO } from './dtos/atualizar-categoria.dto';
+import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 
 @Controller('api/v1')
 export class CategoriaController {
@@ -55,7 +56,7 @@ export class CategoriaController {
   @Put('categorias/:id')
   @UsePipes(ValidationPipe)
   atualizarCategoria(
-    @Param('id') id: string,
+    @Param('id', ValidacaoParametrosPipe) id: string,
     @Body() atualizarCategoriaDTO: AtualizarCategoriaDTO,
   ) {
     this.logger.log(
@@ -69,7 +70,7 @@ export class CategoriaController {
   }
 
   @Delete('categorias/:id')
-  deletarCategoria(@Param('id') id: string) {
+  deletarCategoria(@Param('id', ValidacaoParametrosPipe) id: string) {
     this.logger.log(`deletar-categoria: ${id}`);
 
     this.clientAdminBackend.emit('deletar-categoria', id);
