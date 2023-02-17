@@ -6,7 +6,6 @@ export class JogadorDTO {
   readonly nome: string;
 
   @IsEmail()
-  @IsString()
   readonly email: string;
 
   @IsNotEmpty()
