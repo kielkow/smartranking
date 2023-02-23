@@ -11,15 +11,11 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ClientProxy,
-  ClientProxyFactory,
-  Transport,
-} from '@nestjs/microservices';
 
 import { Observable } from 'rxjs';
 
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
+import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy-factory-provider';
 import { AtualizarJogadorDTO } from './dtos/atualizarJogador.dto';
 import { JogadorDTO } from './dtos/jogador.dto';
 
@@ -27,31 +23,29 @@ import { JogadorDTO } from './dtos/jogador.dto';
 export class JogadorController {
   private logger = new Logger(JogadorController.name);
 
-  private clientAdminBackend: ClientProxy;
-
-  constructor() {
-    this.clientAdminBackend = ClientProxyFactory.create({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://guest:guest@localhost:5672'],
-        queue: 'admin-backend',
-      },
-    });
-  }
+  constructor(
+    private readonly clientProxyFactoryProvider: ClientProxyFactoryProvider,
+  ) {}
 
   @Post('jogadores')
   @UsePipes(ValidationPipe)
   criarJogador(@Body() jogadorDTO: JogadorDTO) {
     this.logger.log(`criar-jogador: ${JSON.stringify(jogadorDTO)}`);
 
-    this.clientAdminBackend.emit('criar-jogador', jogadorDTO);
+    this.clientProxyFactoryProvider.clientProxy.emit(
+      'criar-jogador',
+      jogadorDTO,
+    );
   }
 
   @Get('jogadores')
   consultarJogadores(@Query('id') id: string): Observable<any> {
     this.logger.log(`consultar-jogadores: ${id}`);
 
-    return this.clientAdminBackend.send('consultar-jogadores', id || '');
+    return this.clientProxyFactoryProvider.clientProxy.send(
+      'consultar-jogadores',
+      id || '',
+    );
   }
 
   @Put('jogadores/:id')
@@ -64,7 +58,7 @@ export class JogadorController {
       `atualizar-jogador: ${JSON.stringify(atualizarJogadorDTO)}`,
     );
 
-    this.clientAdminBackend.emit('atualizar-jogador', {
+    this.clientProxyFactoryProvider.clientProxy.emit('atualizar-jogador', {
       id,
       jogador: atualizarJogadorDTO,
     });
@@ -74,6 +68,6 @@ export class JogadorController {
   deletarJogador(@Param('id', ValidacaoParametrosPipe) id: string) {
     this.logger.log(`deletar-jogador: ${id}`);
 
-    this.clientAdminBackend.emit('deletar-jogador', id);
+    this.clientProxyFactoryProvider.clientProxy.emit('deletar-jogador', id);
   }
 }
