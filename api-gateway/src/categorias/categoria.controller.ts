@@ -11,46 +11,41 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ClientProxy,
-  ClientProxyFactory,
-  Transport,
-} from '@nestjs/microservices';
+
 import { Observable } from 'rxjs';
 
 import { CategoriaDTO } from './dtos/categoria.dto';
 import { AtualizarCategoriaDTO } from './dtos/atualizar-categoria.dto';
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
+import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy-factory-provider';
 
 @Controller('api/v1')
 export class CategoriaController {
   private logger = new Logger(CategoriaController.name);
 
-  private clientAdminBackend: ClientProxy;
-
-  constructor() {
-    this.clientAdminBackend = ClientProxyFactory.create({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://guest:guest@localhost:5672'],
-        queue: 'admin-backend',
-      },
-    });
-  }
+  constructor(
+    private readonly clientProxyFactoryProvider: ClientProxyFactoryProvider,
+  ) {}
 
   @Post('categorias')
   @UsePipes(ValidationPipe)
   criarCategoria(@Body() categoriaDTO: CategoriaDTO) {
     this.logger.log(`criar-categoria: ${JSON.stringify(categoriaDTO)}`);
 
-    this.clientAdminBackend.emit('criar-categoria', categoriaDTO);
+    this.clientProxyFactoryProvider.clientProxy.emit(
+      'criar-categoria',
+      categoriaDTO,
+    );
   }
 
   @Get('categorias')
   consultarCategorias(@Query('id') id: string): Observable<any> {
     this.logger.log(`consultar-categorias: ${id}`);
 
-    return this.clientAdminBackend.send('consultar-categorias', id || '');
+    return this.clientProxyFactoryProvider.clientProxy.send(
+      'consultar-categorias',
+      id || '',
+    );
   }
 
   @Put('categorias/:id')
@@ -63,7 +58,7 @@ export class CategoriaController {
       `atualizar-categoria: ${JSON.stringify(atualizarCategoriaDTO)}`,
     );
 
-    this.clientAdminBackend.emit('atualizar-categoria', {
+    this.clientProxyFactoryProvider.clientProxy.emit('atualizar-categoria', {
       id,
       categoria: atualizarCategoriaDTO,
     });
@@ -73,6 +68,6 @@ export class CategoriaController {
   deletarCategoria(@Param('id', ValidacaoParametrosPipe) id: string) {
     this.logger.log(`deletar-categoria: ${id}`);
 
-    this.clientAdminBackend.emit('deletar-categoria', id);
+    this.clientProxyFactoryProvider.clientProxy.emit('deletar-categoria', id);
   }
 }
