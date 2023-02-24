@@ -16,39 +16,35 @@ import { Observable } from 'rxjs';
 
 import { CategoriaDTO } from './dtos/categoria.dto';
 import { AtualizarCategoriaDTO } from './dtos/atualizar-categoria.dto';
+
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
-import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy-factory-provider';
+import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
 
-@Controller('api/v1')
-export class CategoriaController {
-  private logger = new Logger(CategoriaController.name);
+@Controller('api/v1/categorias')
+export class CategoriasController {
+  private logger = new Logger(CategoriasController.name);
 
-  constructor(
-    private readonly clientProxyFactoryProvider: ClientProxyFactoryProvider,
-  ) {}
+  constructor(private clientProxyFactoryProvider: ClientProxyFactoryProvider) {}
 
-  @Post('categorias')
+  private clientAdminBackend =
+    this.clientProxyFactoryProvider.getClientProxyInstance();
+
+  @Post()
   @UsePipes(ValidationPipe)
   criarCategoria(@Body() categoriaDTO: CategoriaDTO) {
     this.logger.log(`criar-categoria: ${JSON.stringify(categoriaDTO)}`);
 
-    this.clientProxyFactoryProvider.clientProxy.emit(
-      'criar-categoria',
-      categoriaDTO,
-    );
+    this.clientAdminBackend.emit('criar-categoria', categoriaDTO);
   }
 
-  @Get('categorias')
+  @Get()
   consultarCategorias(@Query('id') id: string): Observable<any> {
     this.logger.log(`consultar-categorias: ${id}`);
 
-    return this.clientProxyFactoryProvider.clientProxy.send(
-      'consultar-categorias',
-      id || '',
-    );
+    return this.clientAdminBackend.send('consultar-categorias', id || '');
   }
 
-  @Put('categorias/:id')
+  @Put('/:id')
   @UsePipes(ValidationPipe)
   atualizarCategoria(
     @Param('id', ValidacaoParametrosPipe) id: string,
@@ -58,16 +54,16 @@ export class CategoriaController {
       `atualizar-categoria: ${JSON.stringify(atualizarCategoriaDTO)}`,
     );
 
-    this.clientProxyFactoryProvider.clientProxy.emit('atualizar-categoria', {
+    this.clientAdminBackend.emit('atualizar-categoria', {
       id,
       categoria: atualizarCategoriaDTO,
     });
   }
 
-  @Delete('categorias/:id')
+  @Delete('/:id')
   deletarCategoria(@Param('id', ValidacaoParametrosPipe) id: string) {
     this.logger.log(`deletar-categoria: ${id}`);
 
-    this.clientProxyFactoryProvider.clientProxy.emit('deletar-categoria', id);
+    this.clientAdminBackend.emit('deletar-categoria', id);
   }
 }
