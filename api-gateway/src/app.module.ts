@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 
-import { CategoriaController } from './categorias/categoria.controller';
-import { ClientProxyFactoryProvider } from './common/providers/client-proxy-factory-provider';
-import { JogadorController } from './jogadores/jogadores.controller';
+import { CategoriasModule } from './categorias/categorias.module';
+import { JogadoresModule } from './jogadores/jogadores.module';
+
+import { ClientProxyFactoryProvider } from './common/providers/client-proxy/client-proxy-provider-factory';
+import { ClientProxyModule } from './common/providers/client-proxy/client-proxy.module';
 
 @Module({
-  imports: [],
-  controllers: [CategoriaController, JogadorController],
+  imports: [CategoriasModule, JogadoresModule, ClientProxyModule],
+  controllers: [],
   providers: [ClientProxyFactoryProvider],
 })
 export class AppModule {}
