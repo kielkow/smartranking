@@ -7,10 +7,8 @@ import {
 
 @Injectable()
 export class ClientProxyFactoryProvider {
-  clientProxy: ClientProxy;
-
-  constructor() {
-    this.clientProxy = ClientProxyFactory.create({
+  getClientProxyInstance(): ClientProxy {
+    return ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
         urls: ['amqp://guest:guest@localhost:5672'],
