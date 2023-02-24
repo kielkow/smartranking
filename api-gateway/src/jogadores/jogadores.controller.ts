@@ -15,40 +15,36 @@ import {
 import { Observable } from 'rxjs';
 
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
-import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy-factory-provider';
+import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
+
 import { AtualizarJogadorDTO } from './dtos/atualizarJogador.dto';
 import { JogadorDTO } from './dtos/jogador.dto';
 
-@Controller('api/v1')
-export class JogadorController {
-  private logger = new Logger(JogadorController.name);
+@Controller('api/v1/jogadores')
+export class JogadoresController {
+  private logger = new Logger(JogadoresController.name);
 
-  constructor(
-    private readonly clientProxyFactoryProvider: ClientProxyFactoryProvider,
-  ) {}
+  constructor(private clientProxyFactoryProvider: ClientProxyFactoryProvider) {}
 
-  @Post('jogadores')
+  private clientAdminBackend =
+    this.clientProxyFactoryProvider.getClientProxyInstance();
+
+  @Post()
   @UsePipes(ValidationPipe)
   criarJogador(@Body() jogadorDTO: JogadorDTO) {
     this.logger.log(`criar-jogador: ${JSON.stringify(jogadorDTO)}`);
 
-    this.clientProxyFactoryProvider.clientProxy.emit(
-      'criar-jogador',
-      jogadorDTO,
-    );
+    this.clientAdminBackend.emit('criar-jogador', jogadorDTO);
   }
 
-  @Get('jogadores')
+  @Get()
   consultarJogadores(@Query('id') id: string): Observable<any> {
     this.logger.log(`consultar-jogadores: ${id}`);
 
-    return this.clientProxyFactoryProvider.clientProxy.send(
-      'consultar-jogadores',
-      id || '',
-    );
+    return this.clientAdminBackend.send('consultar-jogadores', id || '');
   }
 
-  @Put('jogadores/:id')
+  @Put('/:id')
   @UsePipes(ValidationPipe)
   atualizarJogador(
     @Param('id', ValidacaoParametrosPipe) id: string,
@@ -58,16 +54,16 @@ export class JogadorController {
       `atualizar-jogador: ${JSON.stringify(atualizarJogadorDTO)}`,
     );
 
-    this.clientProxyFactoryProvider.clientProxy.emit('atualizar-jogador', {
+    this.clientAdminBackend.emit('atualizar-jogador', {
       id,
       jogador: atualizarJogadorDTO,
     });
   }
 
-  @Delete('jogadores/:id')
+  @Delete('/:id')
   deletarJogador(@Param('id', ValidacaoParametrosPipe) id: string) {
     this.logger.log(`deletar-jogador: ${id}`);
 
-    this.clientProxyFactoryProvider.clientProxy.emit('deletar-jogador', id);
+    this.clientAdminBackend.emit('deletar-jogador', id);
   }
 }
