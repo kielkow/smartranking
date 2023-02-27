@@ -1,5 +1,7 @@
 import { Document } from 'mongoose';
 
+import { Categoria } from 'src/categorias/interfaces/categoria.interface';
+
 export interface Jogador extends Document {
   readonly telefoneCelular: string;
 
@@ -12,4 +14,6 @@ export interface Jogador extends Document {
   posicaoRanking: string;
 
   urlFotoJogador: string;
+
+  categoria: Categoria;
 }

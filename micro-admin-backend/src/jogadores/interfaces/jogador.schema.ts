@@ -22,6 +22,10 @@ export const JogadorSchema = new mongoose.Schema(
     urlFotoJogador: {
       type: String,
     },
+    categoria: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Categoria',
+    },
   },
   {
     timestamps: true,
