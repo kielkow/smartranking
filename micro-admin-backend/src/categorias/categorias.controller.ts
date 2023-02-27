@@ -7,16 +7,16 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 
-import { AppService } from './app.service';
-import { Categoria } from './interfaces/categorias/categoria.interface';
+import { CategoriasService } from './categorias.service';
+import { Categoria } from './interfaces/categoria.interface';
 
 const ackErrors: string[] = ['E11000'];
 
 @Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+export class CategoriasController {
+  constructor(private readonly categoriasService: CategoriasService) {}
 
-  logger = new Logger(AppController.name);
+  logger = new Logger(CategoriasController.name);
 
   @EventPattern('criar-categoria')
   async criarCategoria(
@@ -29,7 +29,7 @@ export class AppController {
     const originalMessage = context.getMessage();
 
     try {
-      await this.appService.criarCategoria(categoria);
+      await this.categoriasService.criarCategoria(categoria);
 
       await channel.ack(originalMessage);
     } catch (error) {
@@ -54,9 +54,9 @@ export class AppController {
     const originalMessage = context.getMessage();
 
     try {
-      if (id) return await this.appService.consultarCategoriaPorID(id);
+      if (id) return await this.categoriasService.consultarCategoriaPorID(id);
 
-      return await this.appService.consultarCategorias();
+      return await this.categoriasService.consultarCategorias();
     } finally {
       await channel.ack(originalMessage);
     }
@@ -78,7 +78,7 @@ export class AppController {
       const id: string = atualizarCategoria.id;
       const categoria = atualizarCategoria.categoria;
 
-      await this.appService.atualizarCategoria(id, categoria);
+      await this.categoriasService.atualizarCategoria(id, categoria);
 
       await channel.ack(originalMessage);
     } catch (error) {
@@ -100,7 +100,7 @@ export class AppController {
     const originalMessage = context.getMessage();
 
     try {
-      await this.appService.deletarCategoria(id);
+      await this.categoriasService.deletarCategoria(id);
 
       await channel.ack(originalMessage);
     } catch (error) {
