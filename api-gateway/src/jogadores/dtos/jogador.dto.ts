@@ -11,4 +11,8 @@ export class JogadorDTO {
   @IsNotEmpty()
   @IsString()
   readonly telefoneCelular: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly categoria: string;
 }

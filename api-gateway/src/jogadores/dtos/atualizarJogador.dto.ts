@@ -12,4 +12,8 @@ export class AtualizarJogadorDTO {
   @IsOptional()
   @IsString()
   readonly telefoneCelular: string;
+
+  @IsOptional()
+  @IsString()
+  readonly categoria: string;
 }
