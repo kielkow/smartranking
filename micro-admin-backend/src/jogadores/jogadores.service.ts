@@ -37,7 +37,7 @@ export class JogadoresService {
 
   async consultarJogadores(): Promise<Jogador[]> {
     try {
-      return await this.jogadorModel.find().exec();
+      return await this.jogadorModel.find().populate('categoria').exec();
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
@@ -47,7 +47,7 @@ export class JogadoresService {
 
   async consultarJogadorPorID(id: string): Promise<Jogador> {
     try {
-      return await this.jogadorModel.findById(id).exec();
+      return await this.jogadorModel.findById(id).populate('categoria').exec();
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
