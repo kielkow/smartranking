@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
+import { CategoriasModule } from 'src/categorias/categorias.module';
+
 import { JogadorSchema } from './interfaces/jogador.schema';
 import { JogadoresController } from './jogadores.controller';
 import { JogadoresService } from './jogadores.service';
@@ -13,6 +15,7 @@ import { JogadoresService } from './jogadores.service';
         schema: JogadorSchema,
       },
     ]),
+    CategoriasModule,
   ],
   controllers: [JogadoresController],
   providers: [JogadoresService],
