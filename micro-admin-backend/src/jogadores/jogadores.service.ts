@@ -23,7 +23,7 @@ export class JogadoresService {
       const categoria = await this.categoriasService.consultarCategoriaPorID(
         jogador.categoria,
       );
-      if (!categoria) throw 'Categoria informada não encontrada';
+      if (!categoria) throw new Error('Categoria informada não encontrada');
 
       const jogadorCriada = new this.jogadorModel(jogador);
 
@@ -63,7 +63,7 @@ export class JogadoresService {
         const categoria = await this.categoriasService.consultarCategoriaPorID(
           jogador.categoria,
         );
-        if (!categoria) throw 'Categoria informada não encontrada';
+        if (!categoria) throw new Error('Categoria informada não encontrada');
       }
 
       await this.jogadorModel
