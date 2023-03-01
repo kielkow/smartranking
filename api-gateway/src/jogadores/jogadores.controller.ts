@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -12,7 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { Observable } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
@@ -31,8 +32,17 @@ export class JogadoresController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  criarJogador(@Body() jogadorDTO: JogadorDTO) {
+  async criarJogador(@Body() jogadorDTO: JogadorDTO) {
     this.logger.log(`criar-jogador: ${JSON.stringify(jogadorDTO)}`);
+
+    const categoria = await lastValueFrom(
+      this.clientAdminBackend.send(
+        'consultar-categorias',
+        jogadorDTO.categoria,
+      ),
+    );
+
+    if (!categoria) throw new BadRequestException(`Categoria não encontrada`);
 
     this.clientAdminBackend.emit('criar-jogador', jogadorDTO);
   }
@@ -46,13 +56,24 @@ export class JogadoresController {
 
   @Put('/:id')
   @UsePipes(ValidationPipe)
-  atualizarJogador(
+  async atualizarJogador(
     @Param('id', ValidacaoParametrosPipe) id: string,
     @Body() atualizarJogadorDTO: AtualizarJogadorDTO,
   ) {
     this.logger.log(
       `atualizar-jogador: ${JSON.stringify(atualizarJogadorDTO)}`,
     );
+
+    if (atualizarJogadorDTO.categoria) {
+      const categoria = await lastValueFrom(
+        this.clientAdminBackend.send(
+          'consultar-categorias',
+          atualizarJogadorDTO.categoria,
+        ),
+      );
+
+      if (!categoria) throw new BadRequestException(`Categoria não encontrada`);
+    }
 
     this.clientAdminBackend.emit('atualizar-jogador', {
       id,
