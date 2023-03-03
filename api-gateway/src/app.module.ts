@@ -5,9 +5,10 @@ import { JogadoresModule } from './jogadores/jogadores.module';
 
 import { ClientProxyFactoryProvider } from './common/providers/client-proxy/client-proxy-provider-factory';
 import { ClientProxyModule } from './common/providers/client-proxy/client-proxy.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
-  imports: [CategoriasModule, JogadoresModule, ClientProxyModule],
+  imports: [CategoriasModule, JogadoresModule, ClientProxyModule, AwsModule],
   controllers: [],
   providers: [ClientProxyFactoryProvider],
 })
