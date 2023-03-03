@@ -9,9 +9,12 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { lastValueFrom, Observable } from 'rxjs';
 
@@ -86,5 +89,16 @@ export class JogadoresController {
     this.logger.log(`deletar-jogador: ${id}`);
 
     this.clientAdminBackend.emit('deletar-jogador', id);
+  }
+
+  @Post('/:id/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadArquivo(@UploadedFile() file, @Param('id') id: string) {
+    this.logger.log(`upload-arquivo-jogador: ID(${id})-file(${file})`);
+
+    const jogador = await lastValueFrom(
+      this.clientAdminBackend.send('consultar-jogadores', id),
+    );
+    if (!jogador) throw new BadRequestException(`Jogador não encontrado`);
   }
 }
