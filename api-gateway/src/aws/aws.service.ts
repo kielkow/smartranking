@@ -26,8 +26,10 @@ export class AwsService {
       })
       .promise()
       .then(
-        (data) => {
-          return data;
+        () => {
+          return {
+            url: `https://smartranking.s3-sa-east-1.amazonaws.com/${urlKey}`,
+          };
         },
         (error) => {
           this.logger.error(error);
