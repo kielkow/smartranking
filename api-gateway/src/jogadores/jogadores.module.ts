@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
+
+import { AwsModule } from 'src/aws/aws.module';
 import { ClientProxyModule } from '../common/providers/client-proxy/client-proxy.module';
 import { JogadoresController } from './jogadores.controller';
 
 @Module({
-  imports: [ClientProxyModule],
+  imports: [ClientProxyModule, AwsModule],
   controllers: [JogadoresController],
 })
 export class JogadoresModule {}

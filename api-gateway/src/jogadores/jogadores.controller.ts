@@ -20,6 +20,7 @@ import { lastValueFrom, Observable } from 'rxjs';
 
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
+import { AwsService } from 'src/aws/aws.service';
 
 import { AtualizarJogadorDTO } from './dtos/atualizarJogador.dto';
 import { JogadorDTO } from './dtos/jogador.dto';
@@ -28,7 +29,10 @@ import { JogadorDTO } from './dtos/jogador.dto';
 export class JogadoresController {
   private logger = new Logger(JogadoresController.name);
 
-  constructor(private clientProxyFactoryProvider: ClientProxyFactoryProvider) {}
+  constructor(
+    private clientProxyFactoryProvider: ClientProxyFactoryProvider,
+    private awsService: AwsService,
+  ) {}
 
   private clientAdminBackend =
     this.clientProxyFactoryProvider.getClientProxyInstance();
@@ -100,5 +104,7 @@ export class JogadoresController {
       this.clientAdminBackend.send('consultar-jogadores', id),
     );
     if (!jogador) throw new BadRequestException(`Jogador não encontrado`);
+
+    return this.awsService.uploadArquivo(file, jogador.id);
   }
 }
