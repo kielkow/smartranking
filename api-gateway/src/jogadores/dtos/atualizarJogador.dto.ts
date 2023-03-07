@@ -16,4 +16,8 @@ export class AtualizarJogadorDTO {
   @IsOptional()
   @IsString()
   readonly categoria: string;
+
+  @IsOptional()
+  @IsString()
+  urlFotoJogador: string;
 }

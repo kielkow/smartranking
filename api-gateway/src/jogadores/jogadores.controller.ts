@@ -98,13 +98,25 @@ export class JogadoresController {
   @Post('/:id/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadArquivo(@UploadedFile() file, @Param('id') id: string) {
-    this.logger.log(`upload-arquivo-jogador: ID(${id})-file(${file})`);
+    this.logger.log(`upload-arquivo-jogador: id(${id})-file(${file})`);
 
     const jogador = await lastValueFrom(
       this.clientAdminBackend.send('consultar-jogadores', id),
     );
     if (!jogador) throw new BadRequestException(`Jogador não encontrado`);
 
-    return this.awsService.uploadArquivo(file, jogador.id);
+    const { url: urlFotoJogador } = await this.awsService.uploadArquivo(
+      file,
+      jogador.id,
+    );
+
+    await lastValueFrom(
+      this.clientAdminBackend.emit('atualizar-jogador', {
+        id,
+        jogador: { urlFotoJogador },
+      }),
+    );
+
+    return this.clientAdminBackend.send('consultar-jogadores', id);
   }
 }
