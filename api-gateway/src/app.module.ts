@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { CategoriasModule } from './categorias/categorias.module';
 import { JogadoresModule } from './jogadores/jogadores.module';
@@ -8,7 +9,13 @@ import { ClientProxyModule } from './common/providers/client-proxy/client-proxy.
 import { AwsModule } from './aws/aws.module';
 
 @Module({
-  imports: [CategoriasModule, JogadoresModule, ClientProxyModule, AwsModule],
+  imports: [
+    CategoriasModule,
+    JogadoresModule,
+    ClientProxyModule,
+    AwsModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+  ],
   controllers: [],
   providers: [ClientProxyFactoryProvider],
 })
