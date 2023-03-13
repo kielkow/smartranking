@@ -1,8 +1,8 @@
 import { DesafioStatus } from './desafio-status.enum';
 
 import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
-// import { Partida } from '../../partidas/interfaces/partida.interface';
 import { Categoria } from 'src/categorias/interfaces/categoria.interface';
+import { Partida } from './partida.interface';
 
 export interface Desafio {
   dataHoraDesafio: Date;
@@ -19,5 +19,5 @@ export interface Desafio {
 
   jogadores: Array<Jogador>;
 
-  // partida: Partida;
+  partida: Partida;
 }
