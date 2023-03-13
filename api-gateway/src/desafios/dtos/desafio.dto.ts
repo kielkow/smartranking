@@ -14,6 +14,9 @@ export class DesafioDTO {
   @IsNotEmpty()
   solicitante: string;
 
+  @IsNotEmpty()
+  categoria: string;
+
   @IsArray()
   @ArrayMinSize(2)
   @ArrayMaxSize(2)
