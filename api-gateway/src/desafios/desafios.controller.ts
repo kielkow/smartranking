@@ -10,4 +10,7 @@ export class DesafiosController {
 
   private clientAdminBackend =
     this.clientProxyFactoryProvider.getClientProxyInstance();
+
+  private clientAdminBackendDesafios =
+    this.clientProxyFactoryProvider.getClientProxyInstanceDesafios();
 }
