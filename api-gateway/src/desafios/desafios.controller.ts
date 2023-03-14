@@ -2,12 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Logger,
   Post,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
 import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
@@ -80,5 +82,31 @@ export class DesafiosController {
 
     // CRIAR DESAFIO
     this.clientAdminBackendDesafios.emit('criar-desafio', desafioDTO);
+  }
+
+  @Get()
+  async consultarDesafios(
+    @Query('id') id: string,
+    @Query('idJogador') idJogador: string,
+  ): Promise<Observable<any>> {
+    this.logger.log(
+      `consultar-desafios: idDesafio(${id})-idJogador(${idJogador})`,
+    );
+
+    if (idJogador) {
+      const jogador: Jogador = await lastValueFrom(
+        this.clientAdminBackend.send('consultar-jogadores', idJogador),
+      );
+      if (!jogador) {
+        throw new BadRequestException(`Jogador ${idJogador} não encontrado`);
+      }
+
+      return this.clientAdminBackendDesafios.send(
+        'consultar-desafios',
+        idJogador,
+      );
+    }
+
+    return this.clientAdminBackendDesafios.send('consultar-desafios', id || '');
   }
 }
