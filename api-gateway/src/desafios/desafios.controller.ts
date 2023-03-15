@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Logger,
   Param,
@@ -139,5 +140,19 @@ export class DesafiosController {
       id,
       desafio: atualizarDesafioDTO,
     });
+  }
+
+  @Delete('/:id')
+  async deletarDesafio(@Param('id', ValidacaoParametrosPipe) id: string) {
+    this.logger.log(`deletar-desafio: ${id}`);
+
+    const desafio: Desafio = await lastValueFrom(
+      this.clientAdminBackendDesafios.send('consultar-desafios', id),
+    );
+    if (!desafio) {
+      throw new BadRequestException(`Desafio ${id} não encontrado`);
+    }
+
+    this.clientAdminBackendDesafios.emit('deletar-desafio', id);
   }
 }
