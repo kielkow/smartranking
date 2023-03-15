@@ -13,14 +13,16 @@ import {
 } from '@nestjs/common';
 import { lastValueFrom, Observable } from 'rxjs';
 
-import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
+import { DesafioDTO } from './dtos/desafio.dto';
+import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
+
+import { Desafio } from './interfaces/desafio.interface';
 import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
 import { Categoria } from 'src/categorias/interfaces/categoria.interface';
-import { DesafioDTO } from './dtos/desafio.dto';
-import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
-import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
+
 import { DesafioStatusPipe } from './pipes/desafio-status.pipe';
-import { Desafio } from './interfaces/desafio.interface';
+import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
+import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
 
 @Controller('api/v1/desafios')
 export class DesafiosController {
