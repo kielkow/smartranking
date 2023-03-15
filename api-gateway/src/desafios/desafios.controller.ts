@@ -4,7 +4,9 @@ import {
   Controller,
   Get,
   Logger,
+  Param,
   Post,
+  Put,
   Query,
   UsePipes,
   ValidationPipe,
@@ -15,6 +17,10 @@ import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/cl
 import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
 import { Categoria } from 'src/categorias/interfaces/categoria.interface';
 import { DesafioDTO } from './dtos/desafio.dto';
+import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
+import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
+import { DesafioStatusPipe } from './pipes/desafio-status.pipe';
+import { Desafio } from './interfaces/desafio.interface';
 
 @Controller('api/v1/desafios')
 export class DesafiosController {
@@ -108,5 +114,28 @@ export class DesafiosController {
     }
 
     return this.clientAdminBackendDesafios.send('consultar-desafios', id || '');
+  }
+
+  @Put('/:id')
+  @UsePipes(ValidationPipe)
+  async atualizarDesafio(
+    @Param('id', ValidacaoParametrosPipe) id: string,
+    @Body(DesafioStatusPipe) atualizarDesafioDTO: AtualizarDesafioDTO,
+  ) {
+    this.logger.log(
+      `atualizar-desafio: ${JSON.stringify(atualizarDesafioDTO)}`,
+    );
+
+    const desafio: Desafio = await lastValueFrom(
+      this.clientAdminBackendDesafios.send('consultar-desafios', id),
+    );
+    if (!desafio) {
+      throw new BadRequestException(`Desafio ${id} não encontrado`);
+    }
+
+    this.clientAdminBackendDesafios.emit('atualizar-desafio', {
+      id,
+      desafio: atualizarDesafioDTO,
+    });
   }
 }
