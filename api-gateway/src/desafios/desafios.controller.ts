@@ -16,6 +16,7 @@ import { lastValueFrom, Observable } from 'rxjs';
 
 import { DesafioDTO } from './dtos/desafio.dto';
 import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
+import { AtribuirDesafioPartidaDTO } from './dtos/atribuir-desafio-partida.dto';
 
 import { Desafio } from './interfaces/desafio.interface';
 import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
@@ -24,6 +25,7 @@ import { Categoria } from 'src/categorias/interfaces/categoria.interface';
 import { DesafioStatusPipe } from './pipes/desafio-status.pipe';
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
+import { DesafioStatus } from './interfaces/desafio-status.enum';
 
 @Controller('api/v1/desafios')
 export class DesafiosController {
@@ -154,5 +156,47 @@ export class DesafiosController {
     }
 
     this.clientAdminBackendDesafios.emit('deletar-desafio', id);
+  }
+
+  @Put('/:id/atribuirpartida')
+  @UsePipes(ValidationPipe)
+  async atribuirDesafioPartida(
+    @Body() atribuirDesafioPartidaDTO: AtribuirDesafioPartidaDTO,
+    @Param('id', ValidacaoParametrosPipe) id: string,
+  ) {
+    this.logger.log(
+      `atribuir-desafio-partida: ${JSON.stringify(atribuirDesafioPartidaDTO)}`,
+    );
+
+    // VERIFICA SE O DESAFIO EXISTE
+    const desafio: Desafio = await lastValueFrom(
+      this.clientAdminBackendDesafios.send('consultar-desafios', id),
+    );
+    if (!desafio) {
+      throw new BadRequestException(`Desafio ${id} não encontrado`);
+    }
+
+    // VERIFICA STATUS DO DESAFIO
+    if (desafio.status != DesafioStatus.ACEITO) {
+      throw new BadRequestException(
+        'Apenas é possível atribuir partida para desafios com status ACEITO',
+      );
+    }
+
+    // VERIFICA SE O JOGADOR INFORMADO FAZ PARTE DO DESAFIO
+    if (
+      !desafio.jogadores.find(
+        (jogador) => jogador._id === atribuirDesafioPartidaDTO.def,
+      )
+    ) {
+      throw new BadRequestException(
+        'Jogador informado não faz parte do desafio',
+      );
+    }
+
+    this.clientAdminBackendDesafios.emit('atribuir-desafio-partida', {
+      id,
+      desafio: atribuirDesafioPartidaDTO,
+    });
   }
 }
