@@ -7,7 +7,7 @@ import { PartidasModule } from './partidas/partidas.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/smartranking'),
+    MongooseModule.forRoot('mongodb://localhost:27017/srdesafios'),
     DesafiosModule,
     PartidasModule,
     ConfigModule.forRoot({ isGlobal: true }),
