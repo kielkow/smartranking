@@ -1,10 +1,18 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+
+import { DesafiosModule } from './desafios/desafios.module';
+import { PartidasModule } from './partidas/partidas.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost:27017/smartranking'),
+    DesafiosModule,
+    PartidasModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
