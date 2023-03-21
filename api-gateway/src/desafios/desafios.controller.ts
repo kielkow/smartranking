@@ -113,7 +113,7 @@ export class DesafiosController {
       }
 
       return this.clientAdminBackendDesafios.send(
-        'consultar-desafios',
+        'consultar-desafios-por-jogadorID',
         idJogador,
       );
     }
