@@ -27,4 +27,24 @@ export class DesafiosService {
       throw new RpcException(error.message);
     }
   }
+
+  async consultarDesafios(): Promise<Desafio[]> {
+    try {
+      return await this.desafioModel.find().exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
+
+  async consultarDesafioPorID(id: string): Promise<Desafio> {
+    try {
+      return await this.desafioModel.findById(id).exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
 }
