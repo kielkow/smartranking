@@ -58,4 +58,23 @@ export class DesafiosController {
       await channel.ack(originalMessage);
     }
   }
+
+  @MessagePattern('consultar-desafios-por-jogadorID')
+  async consultarDesafiosPorJogadorID(
+    @Payload() jogadorID: string,
+    @Ctx() context: RmqContext,
+  ): Promise<Desafio[]> {
+    this.logger.log(`jogadorID: ${jogadorID}`);
+
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      return await this.desafiosService.consultarDesafiosPorJogadorID(
+        jogadorID,
+      );
+    } finally {
+      await channel.ack(originalMessage);
+    }
+  }
 }

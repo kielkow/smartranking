@@ -47,4 +47,10 @@ export class DesafiosService {
       throw new RpcException(error.message);
     }
   }
+
+  async consultarDesafiosPorJogadorID(jogadorId: string): Promise<Desafio[]> {
+    return await this.desafioModel
+      .find({ where: { 'jogadores._id': jogadorId } })
+      .exec();
+  }
 }
