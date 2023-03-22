@@ -53,4 +53,18 @@ export class DesafiosService {
       .find({ where: { 'jogadores._id': jogadorId } })
       .exec();
   }
+
+  async atualizarDesafio(id: string, desafio: any): Promise<void> {
+    try {
+      this.logger.log(JSON.stringify({ id, desafio }));
+
+      await this.desafioModel
+        .findOneAndUpdate({ _id: id }, { $set: desafio })
+        .exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
 }

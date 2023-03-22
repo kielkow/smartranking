@@ -77,4 +77,32 @@ export class DesafiosController {
       await channel.ack(originalMessage);
     }
   }
+
+  @EventPattern('atualizar-desafio')
+  async atualizarDesafio(
+    @Payload() atualizarDesafio: any,
+    @Ctx() context: RmqContext,
+  ) {
+    this.logger.log(`atualizar-desafio: ${JSON.stringify(atualizarDesafio)}`);
+
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      const id: string = atualizarDesafio.id;
+      const desafio = atualizarDesafio.desafio;
+
+      await this.desafiosService.atualizarDesafio(id, desafio);
+
+      await channel.ack(originalMessage);
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      const filterAckError = ackErrors.filter((ackError) =>
+        error.message.includes(ackError),
+      );
+
+      if (filterAckError) await channel.ack(originalMessage);
+    }
+  }
 }
