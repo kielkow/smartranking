@@ -105,4 +105,26 @@ export class DesafiosController {
       if (filterAckError) await channel.ack(originalMessage);
     }
   }
+
+  @EventPattern('deletar-desafio')
+  async deletarDesafio(@Payload() id: string, @Ctx() context: RmqContext) {
+    this.logger.log(`deletar-desafio: ${id}`);
+
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      await this.desafiosService.deletarDesafio(id);
+
+      await channel.ack(originalMessage);
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      const filterAckError = ackErrors.filter((ackError) =>
+        error.message.includes(ackError),
+      );
+
+      if (filterAckError) await channel.ack(originalMessage);
+    }
+  }
 }

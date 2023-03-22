@@ -67,4 +67,16 @@ export class DesafiosService {
       throw new RpcException(error.message);
     }
   }
+
+  async deletarDesafio(id: string): Promise<void> {
+    try {
+      this.logger.log(id);
+
+      await this.desafioModel.findByIdAndDelete({ _id: id }).exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
 }
