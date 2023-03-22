@@ -8,4 +8,8 @@ export class AtualizarDesafioDTO {
   @IsOptional()
   @IsString()
   status: string;
+
+  @IsOptional()
+  @IsString()
+  partida: string;
 }
