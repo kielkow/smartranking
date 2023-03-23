@@ -5,6 +5,8 @@ import { DesafiosController } from './desafios.controller';
 import { DesafiosService } from './desafios.service';
 import { DesafioSchema } from './interfaces/desafio.schema';
 
+import { PartidasModule } from 'src/partidas/partidas.module';
+
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -13,6 +15,7 @@ import { DesafioSchema } from './interfaces/desafio.schema';
         schema: DesafioSchema,
       },
     ]),
+    PartidasModule,
   ],
   controllers: [DesafiosController],
   providers: [DesafiosService],

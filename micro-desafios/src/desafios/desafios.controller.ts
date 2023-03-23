@@ -7,14 +7,19 @@ import {
   MessagePattern,
 } from '@nestjs/microservices';
 
-import { DesafiosService } from './desafios.service';
 import { Desafio } from './interfaces/desafio.interface';
+
+import { DesafiosService } from './desafios.service';
+import { PartidasService } from 'src/partidas/partidas.service';
 
 const ackErrors: string[] = ['E11000'];
 
 @Controller()
 export class DesafiosController {
-  constructor(private readonly desafiosService: DesafiosService) {}
+  constructor(
+    private readonly desafiosService: DesafiosService,
+    private readonly partidasService: PartidasService,
+  ) {}
 
   logger = new Logger(DesafiosController.name);
 
@@ -115,6 +120,36 @@ export class DesafiosController {
 
     try {
       await this.desafiosService.deletarDesafio(id);
+
+      await channel.ack(originalMessage);
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      const filterAckError = ackErrors.filter((ackError) =>
+        error.message.includes(ackError),
+      );
+
+      if (filterAckError) await channel.ack(originalMessage);
+    }
+  }
+
+  @EventPattern('atribuir-desafio-partida')
+  async atribuirDesafioPartida(
+    @Payload() atribuirDesafioPartida: any,
+    @Ctx() context: RmqContext,
+  ) {
+    this.logger.log(
+      `atribuir-desafio-partida: ${JSON.stringify(atribuirDesafioPartida)}`,
+    );
+
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      const id: string = atribuirDesafioPartida.id;
+      const desafio = atribuirDesafioPartida.desafio;
+
+      await this.partidasService.atribuirDesafioPartida(id, desafio);
 
       await channel.ack(originalMessage);
     } catch (error) {
