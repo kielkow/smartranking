@@ -6,6 +6,10 @@ export const PartidaSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Categoria',
     },
+    desafio: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Desafio',
+    },
     jogadores: [
       {
         type: mongoose.Schema.Types.ObjectId,
