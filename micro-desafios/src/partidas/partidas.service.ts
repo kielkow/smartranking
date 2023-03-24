@@ -30,6 +30,7 @@ export class PartidasService {
 
       const partida = new this.partidaModel({
         categoria: desafio.categoria,
+        desafio: desafioID,
         jogadores: desafio.jogadores,
         def: desafioResultado.def,
         resultado: desafioResultado.resultado,
