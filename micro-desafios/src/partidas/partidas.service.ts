@@ -17,6 +17,20 @@ export class PartidasService {
 
   private readonly logger = new Logger(PartidasService.name);
 
+  async criarPartida(partida: Partida): Promise<Partida> {
+    try {
+      this.logger.log(JSON.stringify(partida));
+
+      const partidaCriada = new this.partidaModel(partida);
+
+      return await partidaCriada.save();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
+
   async atribuirDesafioPartida(
     desafioID: string,
     desafioResultado: any,
