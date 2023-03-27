@@ -9,9 +9,9 @@ export interface Partida {
 
   jogadores: Array<Jogador>;
 
-  def: string;
+  def?: string;
 
-  resultado: Array<Resultado>;
+  resultado?: Array<Resultado>;
 }
 
 export interface Resultado {
