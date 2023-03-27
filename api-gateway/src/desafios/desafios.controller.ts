@@ -18,7 +18,6 @@ import { DesafioDTO } from './dtos/desafio.dto';
 import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
 import { AtribuirDesafioPartidaDTO } from './dtos/atribuir-desafio-partida.dto';
 
-import { Desafio } from './interfaces/desafio.interface';
 import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
 import { Categoria } from 'src/categorias/interfaces/categoria.interface';
 
@@ -26,12 +25,16 @@ import { DesafioStatusPipe } from './pipes/desafio-status.pipe';
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
 import { DesafioStatus } from './interfaces/desafio-status.enum';
+import { DesafiosService } from './desafios.service';
 
 @Controller('api/v1/desafios')
 export class DesafiosController {
   private logger = new Logger(DesafiosController.name);
 
-  constructor(private clientProxyFactoryProvider: ClientProxyFactoryProvider) {}
+  constructor(
+    private clientProxyFactoryProvider: ClientProxyFactoryProvider,
+    private readonly desafiosService: DesafiosService,
+  ) {}
 
   private clientAdminBackend =
     this.clientProxyFactoryProvider.getClientProxyInstance();
@@ -131,12 +134,7 @@ export class DesafiosController {
       `atualizar-desafio: ${JSON.stringify(atualizarDesafioDTO)}`,
     );
 
-    const desafio: Desafio = await lastValueFrom(
-      this.clientAdminBackendDesafios.send('consultar-desafios', id),
-    );
-    if (!desafio) {
-      throw new BadRequestException(`Desafio ${id} não encontrado`);
-    }
+    await this.desafiosService.verificarDesafioExiste(id);
 
     this.clientAdminBackendDesafios.emit('atualizar-desafio', {
       id,
@@ -148,12 +146,7 @@ export class DesafiosController {
   async deletarDesafio(@Param('id', ValidacaoParametrosPipe) id: string) {
     this.logger.log(`deletar-desafio: ${id}`);
 
-    const desafio: Desafio = await lastValueFrom(
-      this.clientAdminBackendDesafios.send('consultar-desafios', id),
-    );
-    if (!desafio) {
-      throw new BadRequestException(`Desafio ${id} não encontrado`);
-    }
+    await this.desafiosService.verificarDesafioExiste(id);
 
     this.clientAdminBackendDesafios.emit('deletar-desafio', id);
   }
@@ -169,12 +162,7 @@ export class DesafiosController {
     );
 
     // VERIFICA SE O DESAFIO EXISTE
-    const desafio: Desafio = await lastValueFrom(
-      this.clientAdminBackendDesafios.send('consultar-desafios', id),
-    );
-    if (!desafio) {
-      throw new BadRequestException(`Desafio ${id} não encontrado`);
-    }
+    const desafio = await this.desafiosService.verificarDesafioExiste(id);
 
     // VERIFICA STATUS DO DESAFIO
     if (desafio.status != DesafioStatus.ACEITO) {
