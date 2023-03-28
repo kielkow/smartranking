@@ -24,6 +24,7 @@ import { AwsService } from 'src/aws/aws.service';
 
 import { AtualizarJogadorDTO } from './dtos/atualizarJogador.dto';
 import { JogadorDTO } from './dtos/jogador.dto';
+import { JogadoresService } from './jogadores.service';
 
 @Controller('api/v1/jogadores')
 export class JogadoresController {
@@ -31,6 +32,7 @@ export class JogadoresController {
 
   constructor(
     private clientProxyFactoryProvider: ClientProxyFactoryProvider,
+    private jogadoresService: JogadoresService,
     private awsService: AwsService,
   ) {}
 
@@ -71,6 +73,8 @@ export class JogadoresController {
       `atualizar-jogador: ${JSON.stringify(atualizarJogadorDTO)}`,
     );
 
+    await this.jogadoresService.verificarJogadorExiste(id);
+
     if (atualizarJogadorDTO.categoria) {
       const categoria = await lastValueFrom(
         this.clientAdminBackend.send(
@@ -89,8 +93,10 @@ export class JogadoresController {
   }
 
   @Delete('/:id')
-  deletarJogador(@Param('id', ValidacaoParametrosPipe) id: string) {
+  async deletarJogador(@Param('id', ValidacaoParametrosPipe) id: string) {
     this.logger.log(`deletar-jogador: ${id}`);
+
+    await this.jogadoresService.verificarJogadorExiste(id);
 
     this.clientAdminBackend.emit('deletar-jogador', id);
   }
@@ -100,14 +106,11 @@ export class JogadoresController {
   async uploadArquivo(@UploadedFile() file, @Param('id') id: string) {
     this.logger.log(`upload-arquivo-jogador: id(${id})-file(${file})`);
 
-    const jogador = await lastValueFrom(
-      this.clientAdminBackend.send('consultar-jogadores', id),
-    );
-    if (!jogador) throw new BadRequestException(`Jogador não encontrado`);
+    await this.jogadoresService.verificarJogadorExiste(id);
 
     const { url: urlFotoJogador } = await this.awsService.uploadArquivo(
       file,
-      jogador.id,
+      id,
     );
 
     await lastValueFrom(
