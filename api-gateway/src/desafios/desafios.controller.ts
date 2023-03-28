@@ -12,20 +12,19 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { lastValueFrom, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { DesafioDTO } from './dtos/desafio.dto';
 import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
 import { AtribuirDesafioPartidaDTO } from './dtos/atribuir-desafio-partida.dto';
-
-import { Jogador } from 'src/jogadores/interfaces/jogador.interface';
-import { Categoria } from 'src/categorias/interfaces/categoria.interface';
 
 import { DesafioStatusPipe } from './pipes/desafio-status.pipe';
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
 import { DesafioStatus } from './interfaces/desafio-status.enum';
 import { DesafiosService } from './desafios.service';
+import { JogadoresService } from 'src/jogadores/jogadores.service';
+import { CategoriasService } from 'src/categorias/categorias.service';
 
 @Controller('api/v1/desafios')
 export class DesafiosController {
@@ -33,7 +32,9 @@ export class DesafiosController {
 
   constructor(
     private clientProxyFactoryProvider: ClientProxyFactoryProvider,
-    private readonly desafiosService: DesafiosService,
+    private desafiosService: DesafiosService,
+    private jogadoresService: JogadoresService,
+    private categoriasService: CategoriasService,
   ) {}
 
   private clientAdminBackend =
@@ -48,31 +49,19 @@ export class DesafiosController {
     this.logger.log(`criar-desafio: ${JSON.stringify(desafioDTO)}`);
 
     // VERIFICAR SE A CATEGORIA EXISTE
-    const categoria: Categoria = await lastValueFrom(
-      this.clientAdminBackend.send(
-        'consultar-categorias',
-        desafioDTO.categoria,
-      ),
+    const categoria = await this.categoriasService.verificarCategoriaExiste(
+      desafioDTO.categoria,
     );
-    if (!categoria) throw new BadRequestException(`Categoria não encontrada`);
 
     // VERIFICAR SE OS JOGADORES EXISTEM
     const jogadorID1 = desafioDTO.jogadores[0];
     const jogadorID2 = desafioDTO.jogadores[1];
-
-    const jogador1: Jogador = await lastValueFrom(
-      this.clientAdminBackend.send('consultar-jogadores', jogadorID1),
+    const jogador1 = await this.jogadoresService.verificarJogadorExiste(
+      jogadorID1,
     );
-    if (!jogador1) {
-      throw new BadRequestException(`Jogador ${jogadorID1} não encontrado`);
-    }
-
-    const jogador2: Jogador = await lastValueFrom(
-      this.clientAdminBackend.send('consultar-jogadores', jogadorID2),
+    const jogador2 = await this.jogadoresService.verificarJogadorExiste(
+      jogadorID2,
     );
-    if (!jogador2) {
-      throw new BadRequestException(`Jogador ${jogadorID2} não encontrado`);
-    }
 
     // VERIFICAR SE A CATEGORIA É A MESMA DOS JOGADORES
     if (
@@ -108,12 +97,7 @@ export class DesafiosController {
     );
 
     if (idJogador) {
-      const jogador: Jogador = await lastValueFrom(
-        this.clientAdminBackend.send('consultar-jogadores', idJogador),
-      );
-      if (!jogador) {
-        throw new BadRequestException(`Jogador ${idJogador} não encontrado`);
-      }
+      await this.jogadoresService.verificarJogadorExiste(idJogador);
 
       return this.clientAdminBackendDesafios.send(
         'consultar-desafios-por-jogadorID',
