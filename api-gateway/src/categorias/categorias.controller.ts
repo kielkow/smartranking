@@ -19,12 +19,16 @@ import { AtualizarCategoriaDTO } from './dtos/atualizar-categoria.dto';
 
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
+import { CategoriasService } from './categorias.service';
 
 @Controller('api/v1/categorias')
 export class CategoriasController {
   private logger = new Logger(CategoriasController.name);
 
-  constructor(private clientProxyFactoryProvider: ClientProxyFactoryProvider) {}
+  constructor(
+    private clientProxyFactoryProvider: ClientProxyFactoryProvider,
+    private categoriasService: CategoriasService,
+  ) {}
 
   private clientAdminBackend =
     this.clientProxyFactoryProvider.getClientProxyInstance();
@@ -46,13 +50,15 @@ export class CategoriasController {
 
   @Put('/:id')
   @UsePipes(ValidationPipe)
-  atualizarCategoria(
+  async atualizarCategoria(
     @Param('id', ValidacaoParametrosPipe) id: string,
     @Body() atualizarCategoriaDTO: AtualizarCategoriaDTO,
   ) {
     this.logger.log(
       `atualizar-categoria: ${JSON.stringify(atualizarCategoriaDTO)}`,
     );
+
+    await this.categoriasService.verificarCategoriaExiste(id);
 
     this.clientAdminBackend.emit('atualizar-categoria', {
       id,
@@ -61,8 +67,10 @@ export class CategoriasController {
   }
 
   @Delete('/:id')
-  deletarCategoria(@Param('id', ValidacaoParametrosPipe) id: string) {
+  async deletarCategoria(@Param('id', ValidacaoParametrosPipe) id: string) {
     this.logger.log(`deletar-categoria: ${id}`);
+
+    await this.categoriasService.verificarCategoriaExiste(id);
 
     this.clientAdminBackend.emit('deletar-categoria', id);
   }
