@@ -10,5 +10,6 @@ import { CategoriasModule } from 'src/categorias/categorias.module';
   imports: [ClientProxyModule, JogadoresModule, CategoriasModule],
   providers: [DesafiosService],
   controllers: [DesafiosController],
+  exports: [DesafiosService],
 })
 export class DesafiosModule {}

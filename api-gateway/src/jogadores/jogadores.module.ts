@@ -9,5 +9,6 @@ import { JogadoresService } from './jogadores.service';
   imports: [ClientProxyModule, AwsModule],
   providers: [JogadoresService],
   controllers: [JogadoresController],
+  exports: [JogadoresService],
 })
 export class JogadoresModule {}

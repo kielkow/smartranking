@@ -8,5 +8,6 @@ import { CategoriasService } from './categorias.service';
   imports: [ClientProxyModule],
   providers: [CategoriasService],
   controllers: [CategoriasController],
+  exports: [CategoriasService],
 })
 export class CategoriasModule {}
