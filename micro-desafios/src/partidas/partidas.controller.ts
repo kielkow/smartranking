@@ -34,4 +34,32 @@ export class PartidasController {
       if (filterAckError) await channel.ack(originalMessage);
     }
   }
+
+  @EventPattern('atualizar-partida')
+  async atualizarPartida(
+    @Payload() atualizarPartida: any,
+    @Ctx() context: RmqContext,
+  ) {
+    this.logger.log(`atualizar-partida: ${JSON.stringify(atualizarPartida)}`);
+
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      const id: string = atualizarPartida.id;
+      const partida = atualizarPartida.partida;
+
+      await this.partidasService.atualizarPartida(id, partida);
+
+      await channel.ack(originalMessage);
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      const filterAckError = ackErrors.filter((ackError) =>
+        error.message.includes(ackError),
+      );
+
+      if (filterAckError) await channel.ack(originalMessage);
+    }
+  }
 }
