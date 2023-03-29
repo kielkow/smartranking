@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -25,6 +24,7 @@ import { AwsService } from 'src/aws/aws.service';
 import { AtualizarJogadorDTO } from './dtos/atualizarJogador.dto';
 import { JogadorDTO } from './dtos/jogador.dto';
 import { JogadoresService } from './jogadores.service';
+import { CategoriasService } from 'src/categorias/categorias.service';
 
 @Controller('api/v1/jogadores')
 export class JogadoresController {
@@ -34,6 +34,7 @@ export class JogadoresController {
     private clientProxyFactoryProvider: ClientProxyFactoryProvider,
     private jogadoresService: JogadoresService,
     private awsService: AwsService,
+    private categoriasService: CategoriasService,
   ) {}
 
   private clientAdminBackend =
@@ -44,14 +45,7 @@ export class JogadoresController {
   async criarJogador(@Body() jogadorDTO: JogadorDTO) {
     this.logger.log(`criar-jogador: ${JSON.stringify(jogadorDTO)}`);
 
-    const categoria = await lastValueFrom(
-      this.clientAdminBackend.send(
-        'consultar-categorias',
-        jogadorDTO.categoria,
-      ),
-    );
-
-    if (!categoria) throw new BadRequestException(`Categoria não encontrada`);
+    await this.categoriasService.verificarCategoriaExiste(jogadorDTO.categoria);
 
     this.clientAdminBackend.emit('criar-jogador', jogadorDTO);
   }
@@ -76,14 +70,9 @@ export class JogadoresController {
     await this.jogadoresService.verificarJogadorExiste(id);
 
     if (atualizarJogadorDTO.categoria) {
-      const categoria = await lastValueFrom(
-        this.clientAdminBackend.send(
-          'consultar-categorias',
-          atualizarJogadorDTO.categoria,
-        ),
+      await this.categoriasService.verificarCategoriaExiste(
+        atualizarJogadorDTO.categoria,
       );
-
-      if (!categoria) throw new BadRequestException(`Categoria não encontrada`);
     }
 
     this.clientAdminBackend.emit('atualizar-jogador', {
