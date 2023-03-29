@@ -6,13 +6,10 @@ import { Model } from 'mongoose';
 
 import { Partida } from './interfaces/partida.interface';
 
-import { DesafiosService } from 'src/desafios/desafios.service';
-
 @Injectable()
 export class PartidasService {
   constructor(
     @InjectModel('Partida') private readonly partidaModel: Model<Partida>,
-    private readonly desafiosService: DesafiosService,
   ) {}
 
   private readonly logger = new Logger(PartidasService.name);
@@ -31,28 +28,13 @@ export class PartidasService {
     }
   }
 
-  async atribuirDesafioPartida(
-    desafioID: string,
-    desafioResultado: any,
-  ): Promise<void> {
+  async atualizarPartida(id: string, partida: any): Promise<void> {
     try {
-      this.logger.log(JSON.stringify({ desafioID, desafioResultado }));
+      this.logger.log(JSON.stringify({ id, partida }));
 
-      const desafio = await this.desafiosService.consultarDesafioPorID(
-        desafioID,
-      );
-
-      const partida = new this.partidaModel({
-        categoria: desafio.categoria,
-        desafio: desafioID,
-        jogadores: desafio.jogadores,
-        def: desafioResultado.def,
-        resultado: desafioResultado.resultado,
-      });
-
-      await partida.save();
-
-      await this.desafiosService.atribuirDesafioPartida(desafio.id, partida.id);
+      await this.partidaModel
+        .findOneAndUpdate({ _id: id }, { $set: partida })
+        .exec();
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
