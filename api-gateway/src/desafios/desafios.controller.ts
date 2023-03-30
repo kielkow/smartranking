@@ -12,7 +12,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 
 import { DesafioDTO } from './dtos/desafio.dto';
 import { AtualizarDesafioDTO } from './dtos/atualizar-desafio.dto';
@@ -166,9 +166,31 @@ export class DesafiosController {
       );
     }
 
-    this.clientAdminBackendDesafios.emit('atribuir-desafio-partida', {
-      id,
-      desafio: atribuirDesafioPartidaDTO,
-    });
+    // CRIA A PARTIDA
+    await lastValueFrom(
+      this.clientAdminBackendDesafios.send('criar-partida', {
+        desafio: id,
+        categoria: desafio.categoria,
+        jogadores: desafio.jogadores,
+        def: atribuirDesafioPartidaDTO.def,
+        resultado: atribuirDesafioPartidaDTO.resultado,
+      }),
+    );
+
+    // CONSULTA A PARTIDA
+    const partida = await lastValueFrom(
+      this.clientAdminBackendDesafios.send(
+        'consultar-partida-por-desafioID',
+        id,
+      ),
+    );
+
+    // ATRIBUI PARTIDA AO DESAFIO
+    await lastValueFrom(
+      this.clientAdminBackendDesafios.send('atribuir-desafio-partida', {
+        id,
+        partidaId: partida._id,
+      }),
+    );
   }
 }

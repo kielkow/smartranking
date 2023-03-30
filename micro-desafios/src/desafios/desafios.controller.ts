@@ -147,9 +147,9 @@ export class DesafiosController {
 
     try {
       const id: string = atribuirDesafioPartida.id;
-      const desafio = atribuirDesafioPartida.desafio;
+      const partidaId = atribuirDesafioPartida.partidaId;
 
-      await this.partidasService.atribuirDesafioPartida(id, desafio);
+      await this.desafiosService.atribuirDesafioPartida(id, partidaId);
 
       await channel.ack(originalMessage);
     } catch (error) {
