@@ -1,5 +1,11 @@
 import { Controller, Logger } from '@nestjs/common';
-import { EventPattern, Payload, Ctx, RmqContext } from '@nestjs/microservices';
+import {
+  EventPattern,
+  Payload,
+  Ctx,
+  RmqContext,
+  MessagePattern,
+} from '@nestjs/microservices';
 
 import { Partida } from './interfaces/partida.interface';
 
@@ -60,6 +66,23 @@ export class PartidasController {
       );
 
       if (filterAckError) await channel.ack(originalMessage);
+    }
+  }
+
+  @MessagePattern('consultar-partida-por-desafioID')
+  async consultarPartidaPorDesafioID(
+    @Payload() desafioID: string,
+    @Ctx() context: RmqContext,
+  ): Promise<Partida> {
+    this.logger.log(`desafioID: ${desafioID}`);
+
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      return await this.partidasService.consultarPartidaPorDesafioID(desafioID);
+    } finally {
+      await channel.ack(originalMessage);
     }
   }
 }

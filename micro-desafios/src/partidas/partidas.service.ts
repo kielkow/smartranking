@@ -41,4 +41,10 @@ export class PartidasService {
       throw new RpcException(error.message);
     }
   }
+
+  async consultarPartidaPorDesafioID(desafioID: string): Promise<Partida> {
+    return await this.partidaModel
+      .findOne({ where: { desafio: desafioID } })
+      .exec();
+  }
 }
