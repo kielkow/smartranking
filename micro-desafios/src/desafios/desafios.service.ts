@@ -95,7 +95,10 @@ export class DesafiosService {
       this.logger.log(JSON.stringify({ partidaId }));
 
       await this.desafioModel
-        .findOneAndUpdate({ _id: id }, { $set: { partida: partidaId } })
+        .findOneAndUpdate(
+          { _id: id },
+          { $set: { status: DesafioStatus.REALIZADO, partida: partidaId } },
+        )
         .exec();
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
