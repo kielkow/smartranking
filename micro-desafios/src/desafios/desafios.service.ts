@@ -77,7 +77,12 @@ export class DesafiosService {
     try {
       this.logger.log(id);
 
-      await this.desafioModel.findByIdAndDelete({ _id: id }).exec();
+      await this.desafioModel
+        .findOneAndUpdate(
+          { _id: id },
+          { $set: { status: DesafioStatus.CANCELADO } },
+        )
+        .exec();
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
