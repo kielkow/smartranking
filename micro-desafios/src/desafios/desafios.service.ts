@@ -57,9 +57,11 @@ export class DesafiosService {
       .exec();
   }
 
-  async atualizarDesafio(id: string, desafio: any): Promise<void> {
+  async atualizarDesafio(id: string, desafio: Desafio): Promise<void> {
     try {
       this.logger.log(JSON.stringify({ id, desafio }));
+
+      desafio.dataHoraResposta = new Date();
 
       await this.desafioModel
         .findOneAndUpdate({ _id: id }, { $set: desafio })
