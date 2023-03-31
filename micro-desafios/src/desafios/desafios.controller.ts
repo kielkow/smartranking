@@ -10,16 +10,12 @@ import {
 import { Desafio } from './interfaces/desafio.interface';
 
 import { DesafiosService } from './desafios.service';
-import { PartidasService } from 'src/partidas/partidas.service';
 
 const ackErrors: string[] = ['E11000'];
 
 @Controller()
 export class DesafiosController {
-  constructor(
-    private readonly desafiosService: DesafiosService,
-    private readonly partidasService: PartidasService,
-  ) {}
+  constructor(private readonly desafiosService: DesafiosService) {}
 
   logger = new Logger(DesafiosController.name);
 
