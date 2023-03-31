@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Desafio } from './interfaces/desafio.interface';
+import { DesafioStatus } from './interfaces/desafio-status.enum';
 
 @Injectable()
 export class DesafiosService {
@@ -19,6 +20,8 @@ export class DesafiosService {
       this.logger.log(JSON.stringify(desafio));
 
       const desafioCriado = new this.desafioModel(desafio);
+
+      desafioCriado.status = DesafioStatus.PENDENTE;
 
       return await desafioCriado.save();
     } catch (error) {
