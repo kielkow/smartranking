@@ -7,13 +7,19 @@ import { Model } from 'mongoose';
 import { Desafio } from './interfaces/desafio.interface';
 import { DesafioStatus } from './interfaces/desafio-status.enum';
 
+import { ClientProxyFactoryProvider } from 'src/proxyrmq/client-proxy';
+
 @Injectable()
 export class DesafiosService {
   constructor(
     @InjectModel('Desafio') private readonly desafioModel: Model<Desafio>,
+    private clientProxyFactoryProvider: ClientProxyFactoryProvider,
   ) {}
 
   private readonly logger = new Logger(DesafiosService.name);
+
+  private clientProxyRankings =
+    this.clientProxyFactoryProvider.getClientProxyInstanceRankings();
 
   async criarDesafio(desafio: Desafio): Promise<Desafio> {
     try {
@@ -100,6 +106,8 @@ export class DesafiosService {
           { $set: { status: DesafioStatus.REALIZADO, partida: partidaId } },
         )
         .exec();
+
+      this.clientProxyRankings.emit('processar-partida', partidaId);
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
