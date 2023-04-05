@@ -30,6 +30,7 @@
     "@types/mongoose": "^5.11.97",
     "amqp-connection-manager": "^4.1.12",
     "amqplib": "^0.10.3",
+    "class-validator": "^0.14.0",
     "mongoose": "^7.0.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
