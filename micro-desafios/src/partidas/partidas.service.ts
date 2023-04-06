@@ -47,4 +47,24 @@ export class PartidasService {
       .findOne({ where: { desafio: desafioID } })
       .exec();
   }
+
+  async consultarPartidas(): Promise<Partida[]> {
+    try {
+      return await this.partidaModel.find().exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
+
+  async consultarPartidaPorID(id: string): Promise<Partida> {
+    try {
+      return await this.partidaModel.findById(id).exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
 }

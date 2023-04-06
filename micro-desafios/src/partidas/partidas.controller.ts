@@ -85,4 +85,23 @@ export class PartidasController {
       await channel.ack(originalMessage);
     }
   }
+
+  @MessagePattern('consultar-partidas')
+  async consultarPartidas(
+    @Payload() id: string,
+    @Ctx() context: RmqContext,
+  ): Promise<Partida[] | Partida> {
+    this.logger.log(`partidaID: ${id}`);
+
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+
+    try {
+      if (id) return await this.partidasService.consultarPartidaPorID(id);
+
+      return await this.partidasService.consultarPartidas();
+    } finally {
+      await channel.ack(originalMessage);
+    }
+  }
 }
