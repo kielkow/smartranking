@@ -30,6 +30,30 @@ export class RankingsService {
       );
 
       this.logger.log(`partida: ${JSON.stringify(partida)}`);
+
+      // CRIA OS RANKINGS PARA CADA JOGADOR
+      partida.jogadores.map((jogador) => {
+        const ranking = new this.rankingModel();
+
+        ranking.categoria = partida.categoria;
+        ranking.desafio = partida.desafio;
+        ranking.partida = partidaId;
+        ranking.jogador = jogador;
+
+        if (jogador === partida.def) {
+          ranking.evento = 'VITORIA';
+          ranking.pontos = 30;
+          ranking.operacao = '+';
+        } else {
+          ranking.evento = 'DERROTA';
+          ranking.pontos = 0;
+          ranking.operacao = '+';
+        }
+
+        this.logger.log(`ranking: ${JSON.stringify(ranking)}`);
+
+        ranking.save();
+      });
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
