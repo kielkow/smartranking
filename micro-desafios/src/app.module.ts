@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { DesafiosModule } from './desafios/desafios.module';
 import { PartidasModule } from './partidas/partidas.module';
+import { ClientProxyModule } from './proxyrmq/proxyrmq.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { PartidasModule } from './partidas/partidas.module';
     DesafiosModule,
     PartidasModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ClientProxyModule,
   ],
   controllers: [],
   providers: [],
