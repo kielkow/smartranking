@@ -8,7 +8,7 @@ export interface Categoria {
   eventos: Array<Evento>;
 }
 
-interface Evento {
+export interface Evento {
   nome: string;
 
   operacao: string;
