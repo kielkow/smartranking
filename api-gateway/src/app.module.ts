@@ -8,12 +8,14 @@ import { DesafiosModule } from './desafios/desafios.module';
 import { ClientProxyFactoryProvider } from './common/providers/client-proxy/client-proxy-provider-factory';
 import { ClientProxyModule } from './common/providers/client-proxy/client-proxy.module';
 import { AwsModule } from './aws/aws.module';
+import { RankingsModule } from './rankings/rankings.module';
 
 @Module({
   imports: [
     CategoriasModule,
     JogadoresModule,
     DesafiosModule,
+    RankingsModule,
     ClientProxyModule,
     AwsModule,
     ConfigModule.forRoot({ isGlobal: true }),
