@@ -9,6 +9,7 @@ import { ClientProxyFactoryProvider } from 'src/proxyrmq/client-proxy';
 import { Categoria } from './interfaces/categoria.interface';
 import { EventoNome } from './interfaces/evento-nome.enum';
 import { Partida } from './interfaces/partida.interface';
+import { RankingResponse } from './interfaces/ranking-response.interface';
 import { Ranking } from './interfaces/ranking.schema';
 
 @Injectable()
@@ -78,6 +79,20 @@ export class RankingsService {
           await ranking.save();
         }),
       );
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
+
+  async consultarRankings(
+    categoriaId: string,
+    dataRef: string,
+  ): Promise<RankingResponse[] | RankingResponse> {
+    try {
+      this.logger.log(JSON.stringify({ categoriaId, dataRef }));
+      return;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
