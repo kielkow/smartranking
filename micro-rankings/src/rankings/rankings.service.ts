@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
 import { lastValueFrom } from 'rxjs';
+import * as momentTimezone from 'moment-timezone';
 
 import { ClientProxyFactoryProvider } from 'src/proxyrmq/client-proxy';
 import { Categoria } from './interfaces/categoria.interface';
@@ -11,6 +12,7 @@ import { EventoNome } from './interfaces/evento-nome.enum';
 import { Partida } from './interfaces/partida.interface';
 import { RankingResponse } from './interfaces/ranking-response.interface';
 import { Ranking } from './interfaces/ranking.schema';
+import { Desafio } from './interfaces/desafio.interface';
 
 @Injectable()
 export class RankingsService {
@@ -92,6 +94,29 @@ export class RankingsService {
   ): Promise<RankingResponse[] | RankingResponse> {
     try {
       this.logger.log(JSON.stringify({ categoriaId, dataRef }));
+
+      // CASO NÃO SEJA INFORMADO UMA DATA BASE, É CALCULADO UMA DATA
+      if (!dataRef) {
+        dataRef = momentTimezone().tz('America/Sao_Paulo').format('YYYY-MM-DD');
+      }
+
+      // BUSCA OS RANKINGS PELA CATEGORIA ID
+      const rankings = await this.rankingModel
+        .find()
+        .where('categoria')
+        .equals(categoriaId)
+        .exec();
+      this.logger.log(JSON.stringify(rankings));
+
+      // BUSCA OS DESAFIOS POR UMA DATA MENOR OU IGUAL A INFORMADA
+      const desafios: Desafio[] = await lastValueFrom(
+        this.clientProxyDesafios.send('consultar-desafios-realizados', {
+          categoriaId,
+          dataRef,
+        }),
+      );
+      this.logger.log(JSON.stringify(desafios));
+
       return;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
