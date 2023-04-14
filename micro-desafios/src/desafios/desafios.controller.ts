@@ -158,4 +158,34 @@ export class DesafiosController {
       if (filterAckError) await channel.ack(originalMessage);
     }
   }
+
+  @MessagePattern('consultar-desafios-realizados')
+  async consultarDesafiosRealizados(
+    @Payload() payload: any,
+    @Ctx() context: RmqContext,
+  ): Promise<Desafio[] | Desafio> {
+    this.logger.log(
+      `consultar-desafios-realizados: ${JSON.stringify(payload)}`,
+    );
+
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+
+    try {
+      const { categoriaId, dataRef } = payload;
+
+      if (dataRef) {
+        return await this.desafiosService.consultarDesafiosRealizadosPelaData(
+          categoriaId,
+          dataRef,
+        );
+      } else {
+        return await this.desafiosService.consultarDesafiosRealizados(
+          categoriaId,
+        );
+      }
+    } finally {
+      await channel.ack(originalMsg);
+    }
+  }
 }

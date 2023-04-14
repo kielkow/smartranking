@@ -3,6 +3,7 @@ import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
+import * as momentTimezone from 'moment-timezone';
 
 import { Desafio } from './interfaces/desafio.interface';
 import { DesafioStatus } from './interfaces/desafio-status.enum';
@@ -108,6 +109,47 @@ export class DesafiosService {
         .exec();
 
       this.clientProxyRankings.emit('processar-partida', partidaId);
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
+
+  async consultarDesafiosRealizados(categoriaId: string): Promise<Desafio[]> {
+    try {
+      return await this.desafioModel
+        .find()
+        .where('categoria')
+        .equals(categoriaId)
+        .where('status')
+        .equals(DesafioStatus.REALIZADO)
+        .exec();
+    } catch (error) {
+      this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
+      throw new RpcException(error.message);
+    }
+  }
+
+  async consultarDesafiosRealizadosPelaData(
+    categoriaId: string,
+    dataRef: string,
+  ): Promise<Desafio[]> {
+    try {
+      const dataRefNew = momentTimezone(`${dataRef} 23:59:59.999`)
+        .tz('UTC')
+        .format('YYYY-MM-DD HH:mm:ss.SSS+00:00');
+
+      return await this.desafioModel
+        .find()
+        .where('categoria')
+        .equals(categoriaId)
+        .where('status')
+        .equals(DesafioStatus.REALIZADO)
+        .where('dataHoraDesafio')
+        .lte(Date.parse(dataRefNew))
+        .exec();
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
