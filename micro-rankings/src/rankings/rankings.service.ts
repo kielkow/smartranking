@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { lastValueFrom } from 'rxjs';
 import * as momentTimezone from 'moment-timezone';
+import * as _ from 'lodash';
 
 import { ClientProxyFactoryProvider } from 'src/proxyrmq/client-proxy';
 import { Categoria } from './interfaces/categoria.interface';
@@ -116,6 +117,15 @@ export class RankingsService {
         }),
       );
       this.logger.log(JSON.stringify(desafios));
+
+      // REMOVE OS RANKINGS QUE NÃO POSSUI DESAFIO RELACIONADO
+      _.remove(rankings, (ranking) => {
+        return (
+          desafios.filter((desafio) => desafio._id === ranking.desafio)
+            .length === 0
+        );
+      });
+      this.logger.log(JSON.stringify(rankings));
 
       return;
     } catch (error) {
