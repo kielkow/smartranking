@@ -138,6 +138,14 @@ export class RankingsService {
         .value();
       this.logger.log(JSON.stringify(rankingsGroupByJogador));
 
+      // ORDERNA PELA PONTUAÇÃO
+      const rankingsOrderByPontos = _.orderBy(
+        rankingsGroupByJogador,
+        'pontos',
+        'desc',
+      );
+      this.logger.log(JSON.stringify(rankingsOrderByPontos));
+
       return;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
