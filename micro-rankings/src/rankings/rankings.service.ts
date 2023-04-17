@@ -127,6 +127,17 @@ export class RankingsService {
       });
       this.logger.log(JSON.stringify(rankings));
 
+      // AGRUPA POR JOGADOR
+      const rankingsGroupByJogador = _(rankings)
+        .groupBy('jogador')
+        .map((items, key) => ({
+          jogador: key,
+          historico: _.countBy(items, 'evento'),
+          pontos: _.sumBy(items, 'pontos'),
+        }))
+        .value();
+      this.logger.log(JSON.stringify(rankingsGroupByJogador));
+
       return;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
