@@ -146,7 +146,20 @@ export class RankingsService {
       );
       this.logger.log(JSON.stringify(rankingsOrderByPontos));
 
-      return;
+      // FORMATA A RESPOSTA
+      const rankingsResponse: RankingResponse[] = rankingsOrderByPontos.map(
+        (item, index) => ({
+          jogador: item.jogador,
+          posicao: index + 1,
+          pontuacao: item.pontos,
+          historicoPartidas: {
+            vitorias: item.historico.VITORIA ? item.historico.VITORIA : 0,
+            derrotas: item.historico.DERROTA ? item.historico.DERROTA : 0,
+          },
+        }),
+      );
+
+      return rankingsResponse;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
