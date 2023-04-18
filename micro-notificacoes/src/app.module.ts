@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientProxyModule } from './proxyrmq/proxyrmq.module';
+
+const configService = new ConfigService();
+const SES_USER = configService.get<string>('SES_USER');
+const SES_PASS = configService.get<string>('SES_PASS');
 
 @Module({
   imports: [
@@ -17,8 +21,8 @@ import { ClientProxyModule } from './proxyrmq/proxyrmq.module';
           ciphers: 'SSLv3',
         },
         auth: {
-          user: 'AKIA4KCP6CKKMS2EP4NU',
-          pass: 'BBMCxEYxkR5nbvAsC++XNSrWBMtIp9YOQ0WAoBTrlE9+',
+          user: SES_USER,
+          pass: SES_PASS,
         },
       },
     }),
