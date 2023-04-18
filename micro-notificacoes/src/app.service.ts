@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { MailerService } from '@nestjs-modules/mailer';
+import { lastValueFrom } from 'rxjs';
+
 import { Desafio } from './interfaces/desafio.interface';
 import { ClientProxyFactoryProvider } from './proxyrmq/client-proxy';
 import { Jogador } from './interfaces/jogador.interface';
-import { RpcException } from '@nestjs/microservices';
-import { MailerService } from '@nestjs-modules/mailer';
 import HTML_NOTIFICACAO_ADVERSARIO from './static/html-notificacao-adversario';
 
 @Injectable()
@@ -33,14 +35,16 @@ export class AppService {
       });
 
       //Consultar as informações adicionais dos jogadores
+      const adversario: Jogador = await lastValueFrom(
+        this.clientAdminBackend.send('consultar-jogadores', idAdversario),
+      );
 
-      const adversario: Jogador = await this.clientAdminBackend
-        .send('consultar-jogadores', idAdversario)
-        .toPromise();
-
-      const solicitante: Jogador = await this.clientAdminBackend
-        .send('consultar-jogadores', desafio.solicitante)
-        .toPromise();
+      const solicitante: Jogador = await lastValueFrom(
+        this.clientAdminBackend.send(
+          'consultar-jogadores',
+          desafio.solicitante,
+        ),
+      );
 
       let markup = '';
 
