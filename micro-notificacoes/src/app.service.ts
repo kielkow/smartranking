@@ -22,19 +22,12 @@ export class AppService {
 
   async enviarEmailParaAdversario(desafio: Desafio): Promise<void> {
     try {
-      /*
-        Identificar o ID do adversario
-      */
+      // IDENTIFICA O ID DO ADVERSÁRIO
+      const idAdversario = desafio.jogadores.find(
+        (jogador) => jogador != desafio.solicitante,
+      );
 
-      let idAdversario = '';
-
-      desafio.jogadores.map((jogador) => {
-        if (jogador != desafio.solicitante) {
-          idAdversario = jogador;
-        }
-      });
-
-      //Consultar as informações adicionais dos jogadores
+      // CONSULTA INFORMAÇÕES DOS JOGADORES
       const adversario: Jogador = await lastValueFrom(
         this.clientAdminBackend.send('consultar-jogadores', idAdversario),
       );
@@ -46,12 +39,14 @@ export class AppService {
         ),
       );
 
+      // SUBSTITUI AS INFORMAÇÕES DOS JOGADORES NO TEMPLATE
       let markup = '';
 
       markup = HTML_NOTIFICACAO_ADVERSARIO;
       markup = markup.replace(/#NOME_ADVERSARIO/g, adversario.nome);
       markup = markup.replace(/#NOME_SOLICITANTE/g, solicitante.nome);
 
+      // ENVIA O E-MAIL
       this.mailService
         .sendMail({
           to: adversario.email,
@@ -67,6 +62,7 @@ export class AppService {
         });
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
+
       throw new RpcException(error.message);
     }
   }
