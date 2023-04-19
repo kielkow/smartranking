@@ -3,6 +3,7 @@ import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
+import { lastValueFrom } from 'rxjs';
 import * as momentTimezone from 'moment-timezone';
 
 import { Desafio } from './interfaces/desafio.interface';
@@ -22,6 +23,9 @@ export class DesafiosService {
   private clientProxyRankings =
     this.clientProxyFactoryProvider.getClientProxyInstanceRankings();
 
+  private clientProxyNotificacoes =
+    this.clientProxyFactoryProvider.getClientProxyInstanceNotificacoes();
+
   async criarDesafio(desafio: Desafio): Promise<Desafio> {
     try {
       this.logger.log(JSON.stringify(desafio));
@@ -30,7 +34,13 @@ export class DesafiosService {
 
       desafioCriado.status = DesafioStatus.PENDENTE;
 
-      return await desafioCriado.save();
+      await desafioCriado.save();
+
+      await lastValueFrom(
+        this.clientProxyNotificacoes.emit('notificacoes-novo-desafio', desafio),
+      );
+
+      return desafioCriado;
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
 
