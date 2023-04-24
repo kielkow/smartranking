@@ -100,7 +100,7 @@ export class DesafiosService {
     return this.clientAdminBackendDesafios.send('consultar-desafios', id || '');
   }
 
-  async atualizarDesafio(id: string, atualizarDesafioDTO: AtualizarDesafioDTO) {
+  atualizarDesafio(id: string, atualizarDesafioDTO: AtualizarDesafioDTO) {
     this.logger.log(
       `atualizar-desafio: ${JSON.stringify(atualizarDesafioDTO)}`,
     );
@@ -111,7 +111,7 @@ export class DesafiosService {
     });
   }
 
-  async deletarDesafio(id: string) {
+  deletarDesafio(id: string) {
     this.logger.log(`deletar-desafio: ${id}`);
 
     this.clientAdminBackendDesafios.emit('deletar-desafio', id);

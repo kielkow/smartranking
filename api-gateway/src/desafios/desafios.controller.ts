@@ -44,12 +44,16 @@ export class DesafiosController {
     @Param('id', ValidacaoParametrosPipe) id: string,
     @Body(DesafioStatusPipe) atualizarDesafioDTO: AtualizarDesafioDTO,
   ) {
-    await this.desafiosService.atualizarDesafio(id, atualizarDesafioDTO);
+    await this.desafiosService.verificarDesafioExiste(id);
+
+    this.desafiosService.atualizarDesafio(id, atualizarDesafioDTO);
   }
 
   @Delete('/:id')
   async deletarDesafio(@Param('id', ValidacaoParametrosPipe) id: string) {
-    await this.desafiosService.deletarDesafio(id);
+    await this.desafiosService.verificarDesafioExiste(id);
+
+    this.desafiosService.deletarDesafio(id);
   }
 
   @Put('/:id/atribuirpartida')
@@ -58,6 +62,8 @@ export class DesafiosController {
     @Body() atribuirDesafioPartidaDTO: AtribuirDesafioPartidaDTO,
     @Param('id', ValidacaoParametrosPipe) id: string,
   ) {
+    await this.desafiosService.verificarDesafioExiste(id);
+
     await this.desafiosService.atribuirDesafioPartida(
       atribuirDesafioPartidaDTO,
       id,
