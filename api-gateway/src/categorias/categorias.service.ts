@@ -29,7 +29,7 @@ export class CategoriasService {
     return categoria;
   }
 
-  async criarCategoria(categoriaDTO: CategoriaDTO) {
+  criarCategoria(categoriaDTO: CategoriaDTO) {
     this.logger.log(`criar-categoria: ${JSON.stringify(categoriaDTO)}`);
 
     this.clientAdminBackend.emit('criar-categoria', categoriaDTO);
@@ -41,10 +41,7 @@ export class CategoriasService {
     return this.clientAdminBackend.send('consultar-categorias', id || '');
   }
 
-  async atualizarCategoria(
-    id: string,
-    atualizarCategoriaDTO: AtualizarCategoriaDTO,
-  ) {
+  atualizarCategoria(id: string, atualizarCategoriaDTO: AtualizarCategoriaDTO) {
     this.logger.log(
       `atualizar-categoria: ${JSON.stringify(atualizarCategoriaDTO)}`,
     );
@@ -55,7 +52,7 @@ export class CategoriasService {
     });
   }
 
-  async deletarCategoria(id: string) {
+  deletarCategoria(id: string) {
     this.logger.log(`deletar-categoria: ${id}`);
 
     this.clientAdminBackend.emit('deletar-categoria', id);
