@@ -1,4 +1,12 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+
+import { CognitoUserSession } from 'amazon-cognito-identity-js';
 
 import { AuthRegistroUsuarioDTO } from './dtos/auth-registro-usuario.dto';
 import { AuthLoginUsuarioDTO } from './dtos/auth-login-usuario.dto';
@@ -10,13 +18,16 @@ export class AuthController {
   constructor(private awsCognitoService: AwsCognitoService) {}
 
   @Post('/registro')
+  @UsePipes(ValidationPipe)
   async registro(@Body() registroDTO: AuthRegistroUsuarioDTO) {
     await this.awsCognitoService.registrarUsuario(registroDTO);
   }
 
   @Post('/login')
-  async login(@Body() loginDTO: AuthLoginUsuarioDTO) {
-    console.log(loginDTO);
-    return;
+  @UsePipes(ValidationPipe)
+  async login(
+    @Body() loginDTO: AuthLoginUsuarioDTO,
+  ): Promise<CognitoUserSession | Error> {
+    return await this.awsCognitoService.loginUsuario(loginDTO);
   }
 }
