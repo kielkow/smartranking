@@ -26,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `${authConfig.authority}/.well-known/jkws.json`,
+        jwksUri: `${authConfig.authority}/.well-known/jwks.json`,
       }),
     });
   }
