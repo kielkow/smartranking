@@ -3,18 +3,23 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Post,
   Put,
   Query,
+  Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { Observable } from 'rxjs';
+import { Request } from 'express';
 
 import { ValidacaoParametrosPipe } from 'src/common/pipes/validacao-parametros.pipe';
 
@@ -24,6 +29,8 @@ import { JogadoresService } from './jogadores.service';
 
 @Controller('api/v1/jogadores')
 export class JogadoresController {
+  private logger = new Logger(JogadoresController.name);
+
   constructor(private jogadoresService: JogadoresService) {}
 
   @Post()
@@ -32,8 +39,14 @@ export class JogadoresController {
     await this.jogadoresService.criarJogador(jogadorDTO);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
-  consultarJogadores(@Query('id') id: string): Observable<any> {
+  consultarJogadores(
+    @Req() req: Request,
+    @Query('id') id: string,
+  ): Observable<any> {
+    this.logger.log(`req: ${JSON.stringify(req.user)}`);
+
     return this.jogadoresService.consultarJogadores(id);
   }
 
