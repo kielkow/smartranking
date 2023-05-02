@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { passportJwtSecret } from 'jwks-rsa';
@@ -6,6 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { AwsCognitoConfig } from 'src/aws/aws-cognito.config';
 
+@Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private logger = new Logger(JwtStrategy.name);
 
