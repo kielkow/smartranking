@@ -6,7 +6,7 @@ import { JogadorDTO } from './dtos/jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 import { AtualizarJogadorDTO } from './dtos/atualizarJogador.dto';
 
-import { AwsS3Service } from 'src/aws/aws-s3.service';
+import { AwsS3Service } from 'src/aws/s3/aws-s3.service';
 import { CategoriasService } from 'src/categorias/categorias.service';
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
 

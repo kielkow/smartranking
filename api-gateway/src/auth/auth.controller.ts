@@ -11,7 +11,7 @@ import { CognitoUserSession } from 'amazon-cognito-identity-js';
 import { AuthRegistroUsuarioDTO } from './dtos/auth-registro-usuario.dto';
 import { AuthLoginUsuarioDTO } from './dtos/auth-login-usuario.dto';
 
-import { AwsCognitoService } from 'src/aws/aws-cognito.service';
+import { AwsCognitoService } from 'src/aws/cognito/aws-cognito.service';
 
 @Controller('api/v1/auth')
 export class AuthController {

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { AwsS3Service } from './aws-s3.service';
-import { AwsCognitoService } from './aws-cognito.service';
+import { AwsS3Service } from './s3/aws-s3.service';
+import { AwsCognitoService } from './cognito/aws-cognito.service';
 
-import { AwsS3Config } from './aws-s3.config';
-import { AwsCognitoConfig } from './aws-cognito.config';
+import { AwsS3Config } from './s3/aws-s3.config';
+import { AwsCognitoConfig } from './cognito/aws-cognito.config';
 
 @Module({
   imports: [],
