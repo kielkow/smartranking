@@ -6,7 +6,7 @@ import { JogadorDTO } from './dtos/jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 import { AtualizarJogadorDTO } from './dtos/atualizarJogador.dto';
 
-import { AwsService } from 'src/aws/aws.service';
+import { AwsS3Service } from 'src/aws/aws-s3.service';
 import { CategoriasService } from 'src/categorias/categorias.service';
 import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/client-proxy-provider-factory';
 
@@ -14,7 +14,7 @@ import { ClientProxyFactoryProvider } from 'src/common/providers/client-proxy/cl
 export class JogadoresService {
   constructor(
     private clientProxyFactoryProvider: ClientProxyFactoryProvider,
-    private awsService: AwsService,
+    private awsS3Service: AwsS3Service,
     private categoriasService: CategoriasService,
   ) {}
 
@@ -76,7 +76,7 @@ export class JogadoresService {
   async uploadArquivo(file: any, id: string): Promise<Observable<any>> {
     this.logger.log(`upload-arquivo-jogador: id(${id})-file(${file})`);
 
-    const { url: urlFotoJogador } = await this.awsService.uploadArquivo(
+    const { url: urlFotoJogador } = await this.awsS3Service.uploadArquivo(
       file,
       id,
     );
