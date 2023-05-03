@@ -1,27 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
+
+import { AwsS3Config } from './aws-s3.config';
 
 @Injectable()
 export class AwsS3Service {
   private logger = new Logger(AwsS3Service.name);
 
-  constructor(private configService: ConfigService) {}
+  constructor(private awsS3Config: AwsS3Config) {}
 
   public async uploadArquivo(file: any, id: string) {
-    const AWS_REGION = this.configService.get<string>('AWS_REGION');
-    const AWS_ACCESS_KEY_ID =
-      this.configService.get<string>('AWS_ACCESS_KEY_ID');
-    const AWS_S3_BUCKET_NAME =
-      this.configService.get<string>('AWS_S3_BUCKET_NAME');
-    const AWS_SECRET_ACCESS_KEY = this.configService.get<string>(
-      'AWS_SECRET_ACCESS_KEY',
-    );
+    const { awsRegion, awsBucket, awsAccessKeyID, awsSecretAccessKey } =
+      this.awsS3Config;
 
     const s3 = new AWS.S3({
-      region: AWS_REGION,
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      region: awsRegion,
+      accessKeyId: awsAccessKeyID,
+      secretAccessKey: awsSecretAccessKey,
     });
 
     const fileExtension = file.originalname.split('.')[1];
@@ -33,14 +28,14 @@ export class AwsS3Service {
     const data = s3
       .putObject({
         Body: file.buffer,
-        Bucket: AWS_S3_BUCKET_NAME,
+        Bucket: this.awsS3Config.awsBucket,
         Key: urlKey,
       })
       .promise()
       .then(
         () => {
           return {
-            url: `https://${AWS_S3_BUCKET_NAME}.s3-${AWS_REGION}.amazonaws.com/${urlKey}`,
+            url: `https://${awsBucket}.s3-${awsRegion}.amazonaws.com/${urlKey}`,
           };
         },
         (error) => {
