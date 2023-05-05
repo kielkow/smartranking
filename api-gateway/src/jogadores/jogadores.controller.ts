@@ -33,6 +33,7 @@ export class JogadoresController {
 
   constructor(private jogadoresService: JogadoresService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @UsePipes(ValidationPipe)
   async criarJogador(@Body() jogadorDTO: JogadorDTO) {
