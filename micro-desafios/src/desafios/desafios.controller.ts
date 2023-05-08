@@ -37,7 +37,12 @@ export class DesafiosController {
         error.message.includes(ackError),
       );
 
-      if (filterAckError) await channel.ack(originalMessage);
+      if (filterAckError) {
+        await channel.ack(originalMessage);
+        return;
+      }
+
+      await channel.nack(originalMessage);
     }
   }
 
@@ -103,7 +108,12 @@ export class DesafiosController {
         error.message.includes(ackError),
       );
 
-      if (filterAckError) await channel.ack(originalMessage);
+      if (filterAckError) {
+        await channel.ack(originalMessage);
+        return;
+      }
+
+      await channel.nack(originalMessage);
     }
   }
 
@@ -125,7 +135,12 @@ export class DesafiosController {
         error.message.includes(ackError),
       );
 
-      if (filterAckError) await channel.ack(originalMessage);
+      if (filterAckError) {
+        await channel.ack(originalMessage);
+        return;
+      }
+
+      await channel.nack(originalMessage);
     }
   }
 
@@ -155,7 +170,12 @@ export class DesafiosController {
         error.message.includes(ackError),
       );
 
-      if (filterAckError) await channel.ack(originalMessage);
+      if (filterAckError) {
+        await channel.ack(originalMessage);
+        return;
+      }
+
+      await channel.nack(originalMessage);
     }
   }
 
