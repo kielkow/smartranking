@@ -40,7 +40,12 @@ export class RankingsController {
         error.message.includes(ackError),
       );
 
-      if (filterAckError) await channel.ack(originalMessage);
+      if (filterAckError) {
+        await channel.ack(originalMessage);
+        return;
+      }
+
+      await channel.nack(originalMessage);
     }
   }
 
