@@ -33,9 +33,12 @@ export class AppController {
         error.message.includes(ackError),
       );
 
-      if (filterAckError.length > 0) {
+      if (filterAckError) {
         await channel.ack(originalMsg);
+        return;
       }
+
+      await channel.nack(originalMsg);
     }
   }
 }
