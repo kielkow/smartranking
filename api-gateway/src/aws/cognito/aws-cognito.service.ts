@@ -10,7 +10,12 @@ import {
 
 import { AuthLoginUsuarioDTO } from 'src/auth/dtos/auth-login-usuario.dto';
 import { AuthRegistroUsuarioDTO } from 'src/auth/dtos/auth-registro-usuario.dto';
-import { LoginResponse } from 'src/auth/interfaces/auth.interfaces';
+import { AuthAlterarSenhaUsuarioDTO } from 'src/auth/dtos/auth-alterar-senha-usuario.dto';
+
+import {
+  AlterarSenhaResponse,
+  LoginResponse,
+} from 'src/auth/interfaces/auth.interfaces';
 
 @Injectable()
 export class AwsCognitoService {
@@ -87,6 +92,42 @@ export class AwsCognitoService {
           resolve({
             accessToken: result.getAccessToken().getJwtToken(),
             refreshToken: result.getRefreshToken().getToken(),
+          });
+        },
+        onFailure: (err) => {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  public async alterarSenhaUsuario(
+    alterarSenhaDTO: AuthAlterarSenhaUsuarioDTO,
+  ): Promise<AlterarSenhaResponse | Error> {
+    this.logger.log(`alterarSenhaUsuario: ${JSON.stringify(alterarSenhaDTO)}`);
+
+    const { email, senhaAtual, senhaNova } = alterarSenhaDTO;
+
+    const userCognito = new CognitoUser({
+      Username: email,
+      Pool: this.userPool,
+    });
+
+    const authDetails = new AuthenticationDetails({
+      Username: email,
+      Password: senhaAtual,
+    });
+
+    return new Promise((resolve, reject) => {
+      userCognito.authenticateUser(authDetails, {
+        onSuccess: () => {
+          userCognito.changePassword(senhaAtual, senhaNova, (err, result) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+
+            resolve({ message: `${result}` });
           });
         },
         onFailure: (err) => {

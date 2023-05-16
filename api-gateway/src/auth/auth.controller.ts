@@ -8,7 +8,12 @@ import {
 
 import { AuthRegistroUsuarioDTO } from './dtos/auth-registro-usuario.dto';
 import { AuthLoginUsuarioDTO } from './dtos/auth-login-usuario.dto';
-import { LoginResponse } from './interfaces/auth.interfaces';
+import { AuthAlterarSenhaUsuarioDTO } from './dtos/auth-alterar-senha-usuario.dto';
+
+import {
+  AlterarSenhaResponse,
+  LoginResponse,
+} from './interfaces/auth.interfaces';
 
 import { AwsCognitoService } from 'src/aws/cognito/aws-cognito.service';
 
@@ -28,5 +33,13 @@ export class AuthController {
     @Body() loginDTO: AuthLoginUsuarioDTO,
   ): Promise<LoginResponse | Error> {
     return await this.awsCognitoService.loginUsuario(loginDTO);
+  }
+
+  @Post('/alterarsenha')
+  @UsePipes(ValidationPipe)
+  async alterarSenha(
+    @Body() alterarSenhaDTO: AuthAlterarSenhaUsuarioDTO,
+  ): Promise<AlterarSenhaResponse | Error> {
+    return await this.awsCognitoService.alterarSenhaUsuario(alterarSenhaDTO);
   }
 }
