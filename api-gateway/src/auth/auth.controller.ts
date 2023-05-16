@@ -6,10 +6,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { CognitoUserSession } from 'amazon-cognito-identity-js';
-
 import { AuthRegistroUsuarioDTO } from './dtos/auth-registro-usuario.dto';
 import { AuthLoginUsuarioDTO } from './dtos/auth-login-usuario.dto';
+import { LoginResponse } from './interfaces/auth.interfaces';
 
 import { AwsCognitoService } from 'src/aws/cognito/aws-cognito.service';
 
@@ -27,7 +26,7 @@ export class AuthController {
   @UsePipes(ValidationPipe)
   async login(
     @Body() loginDTO: AuthLoginUsuarioDTO,
-  ): Promise<CognitoUserSession | Error> {
+  ): Promise<LoginResponse | Error> {
     return await this.awsCognitoService.loginUsuario(loginDTO);
   }
 }

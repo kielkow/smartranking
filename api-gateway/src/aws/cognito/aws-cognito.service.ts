@@ -6,11 +6,11 @@ import {
   CognitoUser,
   CognitoUserAttribute,
   CognitoUserPool,
-  CognitoUserSession,
 } from 'amazon-cognito-identity-js';
 
 import { AuthLoginUsuarioDTO } from 'src/auth/dtos/auth-login-usuario.dto';
 import { AuthRegistroUsuarioDTO } from 'src/auth/dtos/auth-registro-usuario.dto';
+import { LoginResponse } from 'src/auth/interfaces/auth.interfaces';
 
 @Injectable()
 export class AwsCognitoService {
@@ -66,7 +66,7 @@ export class AwsCognitoService {
 
   public async loginUsuario(
     loginDTO: AuthLoginUsuarioDTO,
-  ): Promise<CognitoUserSession | Error> {
+  ): Promise<LoginResponse | Error> {
     this.logger.log(`loginUsuario: ${JSON.stringify(loginDTO)}`);
 
     const { email, senha } = loginDTO;
@@ -84,7 +84,10 @@ export class AwsCognitoService {
     return new Promise((resolve, reject) => {
       userCognito.authenticateUser(authDetails, {
         onSuccess: (result) => {
-          resolve(result);
+          resolve({
+            accessToken: result.getAccessToken().getJwtToken(),
+            refreshToken: result.getRefreshToken().getToken(),
+          });
         },
         onFailure: (err) => {
           reject(err);
