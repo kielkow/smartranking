@@ -11,9 +11,13 @@ import {
 import { AuthLoginUsuarioDTO } from 'src/auth/dtos/auth-login-usuario.dto';
 import { AuthRegistroUsuarioDTO } from 'src/auth/dtos/auth-registro-usuario.dto';
 import { AuthAlterarSenhaUsuarioDTO } from 'src/auth/dtos/auth-alterar-senha-usuario.dto';
+import { AuthEsquecerSenhaUsuarioDTO } from 'src/auth/dtos/auth-esquecer-senha-usuario.dto';
+import { AuthConfirmarSenhaUsuarioDTO } from 'src/auth/dtos/auth-confirmar-senha-usuario.dto';
 
 import {
   AlterarSenhaResponse,
+  ConfirmarSenhaResponse,
+  EsquecerSenhaResponse,
   LoginResponse,
 } from 'src/auth/interfaces/auth.interfaces';
 
@@ -132,6 +136,58 @@ export class AwsCognitoService {
         },
         onFailure: (err) => {
           reject(err);
+        },
+      });
+    });
+  }
+
+  public async esquecerSenhaUsuario(
+    esquecerSenhaDTO: AuthEsquecerSenhaUsuarioDTO,
+  ): Promise<EsquecerSenhaResponse | Error> {
+    this.logger.log(
+      `esquecerSenhaUsuario: ${JSON.stringify(esquecerSenhaDTO)}`,
+    );
+
+    const { email } = esquecerSenhaDTO;
+
+    const userCognito = new CognitoUser({
+      Username: email,
+      Pool: this.userPool,
+    });
+
+    return new Promise((resolve, reject) => {
+      userCognito.forgotPassword({
+        onSuccess: (result) => {
+          resolve({ message: `${result}` });
+        },
+        onFailure: (error) => {
+          reject(error);
+        },
+      });
+    });
+  }
+
+  public async confirmarSenhaUsuario(
+    confirmarSenhaDTO: AuthConfirmarSenhaUsuarioDTO,
+  ): Promise<ConfirmarSenhaResponse | Error> {
+    this.logger.log(
+      `confirmarSenhaUsuario: ${JSON.stringify(confirmarSenhaDTO)}`,
+    );
+
+    const { email, codigoConfirmacao, novaSenha } = confirmarSenhaDTO;
+
+    const userCognito = new CognitoUser({
+      Username: email,
+      Pool: this.userPool,
+    });
+
+    return new Promise((resolve, reject) => {
+      userCognito.confirmPassword(codigoConfirmacao, novaSenha, {
+        onSuccess: (result) => {
+          resolve({ message: `${result}` });
+        },
+        onFailure: (error) => {
+          reject(error);
         },
       });
     });

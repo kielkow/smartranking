@@ -9,11 +9,8 @@ import {
 import { AuthRegistroUsuarioDTO } from './dtos/auth-registro-usuario.dto';
 import { AuthLoginUsuarioDTO } from './dtos/auth-login-usuario.dto';
 import { AuthAlterarSenhaUsuarioDTO } from './dtos/auth-alterar-senha-usuario.dto';
-
-import {
-  AlterarSenhaResponse,
-  LoginResponse,
-} from './interfaces/auth.interfaces';
+import { AuthEsquecerSenhaUsuarioDTO } from './dtos/auth-esquecer-senha-usuario.dto';
+import { AuthConfirmarSenhaUsuarioDTO } from './dtos/auth-confirmar-senha-usuario.dto';
 
 import { AwsCognitoService } from 'src/aws/cognito/aws-cognito.service';
 
@@ -29,17 +26,29 @@ export class AuthController {
 
   @Post('/login')
   @UsePipes(ValidationPipe)
-  async login(
-    @Body() loginDTO: AuthLoginUsuarioDTO,
-  ): Promise<LoginResponse | Error> {
+  async login(@Body() loginDTO: AuthLoginUsuarioDTO) {
     return await this.awsCognitoService.loginUsuario(loginDTO);
   }
 
   @Post('/alterarsenha')
   @UsePipes(ValidationPipe)
-  async alterarSenha(
-    @Body() alterarSenhaDTO: AuthAlterarSenhaUsuarioDTO,
-  ): Promise<AlterarSenhaResponse | Error> {
+  async alterarSenha(@Body() alterarSenhaDTO: AuthAlterarSenhaUsuarioDTO) {
     return await this.awsCognitoService.alterarSenhaUsuario(alterarSenhaDTO);
+  }
+
+  @Post('/esquecersenha')
+  @UsePipes(ValidationPipe)
+  async esquecerSenha(@Body() esquecerSenhaDTO: AuthEsquecerSenhaUsuarioDTO) {
+    return await this.awsCognitoService.esquecerSenhaUsuario(esquecerSenhaDTO);
+  }
+
+  @Post('/confirmarsenha')
+  @UsePipes(ValidationPipe)
+  async confirmarSenha(
+    @Body() confirmarSenhaDTO: AuthConfirmarSenhaUsuarioDTO,
+  ) {
+    return await this.awsCognitoService.confirmarSenhaUsuario(
+      confirmarSenhaDTO,
+    );
   }
 }
