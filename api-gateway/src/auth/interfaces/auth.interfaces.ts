@@ -6,3 +6,11 @@ export interface LoginResponse {
 export interface AlterarSenhaResponse {
   message: string;
 }
+
+export interface EsquecerSenhaResponse {
+  message: string;
+}
+
+export interface ConfirmarSenhaResponse {
+  message: string;
+}
