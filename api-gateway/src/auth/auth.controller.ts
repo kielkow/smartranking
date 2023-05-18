@@ -1,7 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -50,5 +53,14 @@ export class AuthController {
     return await this.awsCognitoService.confirmarSenhaUsuario(
       confirmarSenhaDTO,
     );
+  }
+
+  @Get('/usuarios')
+  async consultarUsuario(@Query('usuario') usuario: string) {
+    if (!usuario) {
+      throw new BadRequestException('Usuario deve ser informado');
+    }
+
+    return await this.awsCognitoService.consultarUsuario(usuario);
   }
 }

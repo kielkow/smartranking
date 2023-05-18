@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-// import * as AWS from 'aws-sdk';
+import * as AWS from 'aws-sdk';
 
 import {
   AuthenticationDetails,
@@ -193,14 +193,33 @@ export class AwsCognitoService {
     });
   }
 
-  // public async consultarUsuario(usuario: string): Promise<any> {
-  //   this.logger.log(`consultarUsuario: ${JSON.stringify(usuario)}`);
+  public async consultarUsuario(usuario: string): Promise<any> {
+    this.logger.log(`consultarUsuario: ${JSON.stringify(usuario)}`);
 
-  //   return new Promise((resolve, reject) => {
-  //     AWS.config.update({
-  //       region: this.awsCognitoConfig.region,
-  //       accessKeyId: this.awsCognitoConfig.
-  //     });
-  //   });
-  // }
+    return new Promise((resolve, reject) => {
+      AWS.config.update({
+        region: this.awsCognitoConfig.region,
+        accessKeyId: this.awsCognitoConfig.awsAccessKeyID,
+        secretAccessKey: this.awsCognitoConfig.awsSecretAccessKey,
+      });
+
+      const cognitoIdentityServiceProvider =
+        new AWS.CognitoIdentityServiceProvider();
+
+      cognitoIdentityServiceProvider.listUsers(
+        {
+          UserPoolId: this.awsCognitoConfig.userPoolId,
+          Filter: `email = ${usuario}`,
+        },
+        (error, data) => {
+          if (error) {
+            reject(error);
+          } else {
+            console.log(data);
+            resolve(data);
+          }
+        },
+      );
+    });
+  }
 }
