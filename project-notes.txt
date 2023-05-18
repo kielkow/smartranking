@@ -11,3 +11,15 @@
         }
     ]
 }
+
+// Config. para permitir leitura dos usuarios do Cognito:
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": ["cognito-idp:ListUsers"],
+            "Resource": "arn:aws:cognito-idp:us-east-1:846276203156:userpool/us-east-1_jTqHJdBUD"
+        }
+    ]
+}
