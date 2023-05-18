@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+
+// import * as AWS from 'aws-sdk';
 
 import {
   AuthenticationDetails,
@@ -7,6 +8,8 @@ import {
   CognitoUserAttribute,
   CognitoUserPool,
 } from 'amazon-cognito-identity-js';
+
+import { AwsCognitoConfig } from './aws-cognito.config';
 
 import { AuthLoginUsuarioDTO } from 'src/auth/dtos/auth-login-usuario.dto';
 import { AuthRegistroUsuarioDTO } from 'src/auth/dtos/auth-registro-usuario.dto';
@@ -27,12 +30,9 @@ export class AwsCognitoService {
 
   private logger = new Logger(AwsCognitoService.name);
 
-  constructor(private configService: ConfigService) {
-    const COGNITO_USER_POOL_ID = this.configService.get<string>(
-      'COGNITO_USER_POOL_ID',
-    );
-    const COGNITO_CLIENT_ID =
-      this.configService.get<string>('COGNITO_CLIENT_ID');
+  constructor(private awsCognitoConfig: AwsCognitoConfig) {
+    const COGNITO_CLIENT_ID = this.awsCognitoConfig.clientId;
+    const COGNITO_USER_POOL_ID = this.awsCognitoConfig.userPoolId;
 
     this.userPool = new CognitoUserPool({
       UserPoolId: COGNITO_USER_POOL_ID,
@@ -192,4 +192,15 @@ export class AwsCognitoService {
       });
     });
   }
+
+  // public async consultarUsuario(usuario: string): Promise<any> {
+  //   this.logger.log(`consultarUsuario: ${JSON.stringify(usuario)}`);
+
+  //   return new Promise((resolve, reject) => {
+  //     AWS.config.update({
+  //       region: this.awsCognitoConfig.region,
+  //       accessKeyId: this.awsCognitoConfig.
+  //     });
+  //   });
+  // }
 }
